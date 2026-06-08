@@ -1,0 +1,99 @@
+---
+title: "Browse and manage installed eikons in Herm Gallery"
+sidebarTitle: "Gallery"
+description: "How to view installed eikons, activate one for the sidebar, install from a file or URL, open in Studio, and submit to the Marketplace."
+---
+
+The Gallery is your home base for managing eikons. It lists every eikon available to Herm — both the eikons bundled with the app and any you have installed yourself under `~/.hermes/eikons/` — and shows a live animated preview of whichever entry you have selected. From here you can activate an eikon, create or install a new one, open it in Studio for editing, or submit it to the community Marketplace.
+
+## Opening the Gallery
+
+Navigate to the Gallery sub-tab in any of the following ways:
+
+- Press **Alt+5** to open the Eikon tab, then select **Gallery** from the sub-tab strip.
+- Type `/gallery` in the chat input to jump directly to the Gallery.
+
+## Reading the list
+
+Each row in the Gallery shows:
+
+- **Name** — highlighted in the accent colour when that eikon is currently active (indicated by a `●` prefix).
+- **Author** — the creator declared in the `.eikon` header, or `—` if absent.
+- **Source status** — whether a local source file is present (`● source`), a remote source URL is known but not yet downloaded (`○ source available`), or no source information exists at all (`— no source`).
+- **(bundled)** — appended to the name for eikons shipped with Herm.
+
+The right pane shows a live animated preview of the selected eikon. If no preview can be rendered, it displays **No preview.**
+
+## Activating an eikon
+
+Select any row with **↑↓** and press **Enter** (or your configured `list.activate` key) to make that eikon active. You can also click a row to activate it immediately. A toast notification confirms the change:
+
+```
+Avatar → <name>
+```
+
+The sidebar will switch to the newly activated eikon right away.
+
+## Creating or installing a new eikon
+
+Press your configured `list.new` key (shown in the hint bar at the bottom) to open the **New / Install** dialog. You have three paths:
+
+<Steps>
+  <Step title="Blank">
+    Create an empty eikon with a name you choose. Herm opens the new eikon immediately in Studio so you can attach a source and start editing.
+  </Step>
+  <Step title="From file">
+    Give the new eikon a name and provide a path to a local image or video file. Herm adopts the file into the eikon's `source/` folder and opens it in Studio.
+  </Step>
+  <Step title="From URL or catalog name">
+    Provide a catalog name, GitHub URL, git URL, or HTTP manifest URL. Herm downloads and installs the package, then confirms with a success toast showing the name and file count.
+  </Step>
+</Steps>
+
+## Opening an eikon in Studio
+
+Select an eikon and press **e** to open it in Eikon Studio for editing. This works for both user-installed and bundled eikons.
+
+## Submitting an eikon to the Marketplace
+
+You can share a locally created eikon with the community directly from the Gallery.
+
+<Steps>
+  <Step title="Select the eikon">
+    Use **↑↓** to highlight the eikon you want to submit. It must be a non-bundled, user-created eikon.
+  </Step>
+  <Step title="Press u">
+    Press **u** to open the submission preflight dialog. Herm shows you the exact bundle that will be submitted before anything is sent.
+  </Step>
+  <Step title="Review and confirm">
+    Review the preflight output, then confirm the submission. Herm blocks duplicate submissions — if the eikon was installed from the Marketplace, you must create a local draft before submitting.
+  </Step>
+</Steps>
+
+<Warning>
+  Bundled eikons cannot be submitted. The **u** key is only active when a non-bundled eikon is selected.
+</Warning>
+
+## Opening the Marketplace
+
+Press **M** from the Gallery to jump directly to the Eikon Marketplace and browse community-shared eikons.
+
+## Deleting an eikon
+
+Select a non-bundled eikon and press your configured `list.delete` key to delete it. Herm asks for confirmation before removing the entire eikon folder — including its `source/` files — from disk. This action cannot be undone.
+
+<Warning>
+  Bundled eikons cannot be deleted. The delete action is only available for user-installed eikons.
+</Warning>
+
+## Keyboard reference
+
+| Key | Action |
+|---|---|
+| **↑ / ↓** | Move selection |
+| **Enter** (or `list.activate`) | Activate selected eikon |
+| **e** | Open selected eikon in Studio |
+| **u** | Submit selected eikon to Marketplace |
+| `list.new` | Open New / Install dialog |
+| `list.delete` | Delete selected eikon (non-bundled only) |
+| **M** | Open Eikon Marketplace |

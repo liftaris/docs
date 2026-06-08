@@ -1,0 +1,104 @@
+{
+  "projectType": "cli-tool",
+  "projectName": "Herm",
+  "projectDescription": "A terminal UI (TUI) for Hermes Agent that consolidates chat, session management, profiles, automation, configuration, and avatar customization into a single keyboard-driven terminal interface.",
+  "theme": "luma",
+  "primaryColor": "#bf3b41",
+  "lightColor": "#f7ecd7",
+  "darkColor": "#090908",
+  "navigation": {
+    "tabs": [
+      {
+        "tab": "Documentation",
+        "groups": [
+          {
+            "group": "Get Started",
+            "pages": [
+              "introduction",
+              "quickstart",
+              "configuration"
+            ]
+          },
+          {
+            "group": "Core Features",
+            "pages": [
+              "features/chat",
+              "features/sessions",
+              "features/automation",
+              "features/config"
+            ]
+          },
+          {
+            "group": "Eikon Avatars",
+            "pages": [
+              "eikon/overview",
+              "eikon/gallery",
+              "eikon/studio",
+              "eikon/marketplace"
+            ]
+          },
+          {
+            "group": "Customization",
+            "pages": [
+              "customization/themes",
+              "customization/keybindings",
+              "customization/slash-commands"
+            ]
+          },
+          {
+            "group": "Plugins",
+            "pages": [
+              "plugins/overview",
+              "plugins/api-reference",
+              "plugins/examples"
+            ]
+          },
+          {
+            "group": "Troubleshooting",
+            "pages": [
+              "troubleshooting/faq",
+              "troubleshooting/common-issues"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "keyFeatures": [
+    "Keyboard-driven chat interface with streaming markdown, LaTeX, inline images, and diff chips",
+    "Session management: resume, title, branch, compress, rollback checkpoints",
+    "Profiles & Automation tab with Kanban boards, Hermes profiles, and cron jobs",
+    "Config tab for managing skills, toolsets, environment variables, and memory",
+    "Eikon avatar system with Gallery, Studio editor, and Marketplace",
+    "40+ built-in themes with a live theme picker (/theme)",
+    "Rebindable keybindings with leader-key sequences and command palette (Ctrl+K)",
+    "Slash commands for session control, model switching, and app actions",
+    "Plugin system for extending the TUI with new slots, tabs, and commands",
+    "Voice mode (STT) for hands-free input",
+    "@-references for attaching file and diff context to messages"
+  ],
+  "publicApiSurface": [
+    "herm (CLI entry point)",
+    "herm -c (resume last session)",
+    "bunx herm-tui (run without installing)",
+    "/new, /clear, /theme, /keys, /title, /rollback, /history, /status, /usage, /profile",
+    "/steer, /reload, /reload-mcp, /reload-skills, /voice, /queue, /stash, /browser, /quit",
+    "Ctrl+K (command palette)",
+    "Alt+Left/Right (tab navigation)",
+    "Shift+Left/Right (sub-tab navigation)",
+    "<leader> (Ctrl+X) two-stroke global prefix",
+    "HermPlugin { id, tui(api) } plugin interface",
+    "api.slots.register() — inject UI into app_bottom, sidebar_content, sidebar_footer, prompt_right, splash_footer",
+    "api.route.register() — add top-level tabs",
+    "api.command.register() — add command palette entries",
+    "api.event.on() — listen to gateway stream events",
+    "api.eikon.rasterizer.register() — add custom image rasterizers",
+    "api.ui.toast/confirm/prompt/alert/select",
+    "api.kv.get/set — persistent plugin key-value store",
+    "api.client.request() — Hermes gateway RPC",
+    "HERMES_HOME env var (default: ~/.hermes)",
+    "HERM_CONFIG_DIR env var",
+    "HERMES_PYTHON env var",
+    "HERMES_AGENT_ROOT env var"
+  ]
+}

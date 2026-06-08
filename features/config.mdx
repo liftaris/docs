@@ -1,0 +1,108 @@
+---
+title: "Herm Config tab — settings, skills, and toolsets"
+sidebarTitle: "Config"
+description: "Manage Hermes Agent's settings, skills, toolsets, environment variables, and persistent memory entries — all from the Config tab in Herm."
+---
+
+The Config tab (press **Alt+4** or type `/config` in the chat composer) brings together every operational knob for Hermes Agent into a single place. There are five sub-tabs — **Config**, **Skills**, **Toolsets**, **Env**, and **Memory** — navigated with **Shift+Left / Shift+Right**. You can jump to any sub-tab directly from the chat composer using its matching slash command.
+
+## Config
+
+The Config sub-tab lets you view and edit Hermes Agent's core configuration without opening a text editor.
+
+| Key | Action |
+|-----|--------|
+| `m` | Toggle between form view and raw YAML |
+| `Ctrl+S` | Save the current configuration |
+
+Switch to YAML mode with `m` when you need to edit fields not yet exposed in the form, or when you want to copy a config block verbatim. Form mode is better for guided edits with inline validation.
+
+After saving, configuration changes take effect for the next turn. Use `/reload` to hot-reload `~/.hermes/.env` (API keys and env overrides) without restarting the gateway, and `/reload-mcp` to restart MCP servers and rediscover any new tools.
+
+<Note>
+  Navigate here directly with `/config`. From the Config sub-tab, `Ctrl+S` writes the configuration back to disk.
+</Note>
+
+## Skills
+
+The Skills sub-tab lists all skills loaded from `~/.hermes/skills/`. Skills are Markdown-based capability files that extend what Hermes Agent can do.
+
+<CardGroup cols={2}>
+  <Card title="Enable / disable" icon="toggle-on">
+    Highlight a skill and press `Space` to toggle it on or off for the current session.
+  </Card>
+  <Card title="Reload skills" icon="rotate">
+    Run `/reload-skills` (alias: `/reload_skills`) to re-scan `~/.hermes/skills/` for any skills you have added or removed on disk since Herm started.
+  </Card>
+</CardGroup>
+
+Jump to this sub-tab at any time with `/skills`.
+
+<Tip>
+  After adding a new skill file to `~/.hermes/skills/`, run `/reload-skills` in the chat composer so Herm and the gateway pick it up without a restart.
+</Tip>
+
+## Toolsets
+
+The Toolsets sub-tab shows the tool configurations available to Hermes Agent — the set of external tools, MCP servers, and built-in capabilities that the agent can call during a turn.
+
+Use this view to inspect what tools the agent has access to and manage their configuration. After making changes, run `/reload-mcp` to restart MCP servers and rediscover tools.
+
+Jump to this sub-tab with `/toolsets`.
+
+## Env
+
+The Env sub-tab shows the environment variables that are passed to the Hermes Agent gateway. This is where API keys, model endpoint overrides, and other runtime secrets live.
+
+<Warning>
+  Values in the Env sub-tab are drawn from `~/.hermes/.env` (or the active profile's `.env`). Be careful when editing API keys here — an incorrect value will cause the gateway to fail on the next request.
+</Warning>
+
+After editing environment variables, run `/reload` to hot-reload the `.env` file without restarting the gateway:
+
+```bash
+/reload
+```
+
+Jump to this sub-tab with `/env`.
+
+## Memory
+
+The Memory sub-tab lets you browse the persistent memory entries that Hermes Agent has stored across sessions. These entries persist between conversations and can influence how the agent responds to you over time.
+
+| Key | Action |
+|-----|--------|
+| `↑` / `↓` | Navigate memory entries |
+| `d` | Delete the selected entry |
+| `/` | Filter entries by content |
+
+Jump to this sub-tab with `/memory`.
+
+<Note>
+  Deleting a memory entry is permanent. The agent will no longer have access to that information in future sessions.
+</Note>
+
+## Quick-navigation slash commands
+
+Every Config sub-tab has a direct slash command you can type from the chat composer:
+
+| Command | Destination |
+|---------|-------------|
+| `/config` | Config sub-tab |
+| `/skills` | Skills sub-tab |
+| `/toolsets` | Toolsets sub-tab |
+| `/env` | Env sub-tab |
+| `/memory` | Memory sub-tab |
+
+## Hot-reload commands
+
+Two slash commands let you apply changes without restarting the Hermes Agent gateway:
+
+<CardGroup cols={2}>
+  <Card title="/reload" icon="rotate">
+    Hot-reload `~/.hermes/.env` to pick up updated API keys and environment overrides immediately.
+  </Card>
+  <Card title="/reload-mcp" icon="plug">
+    Restart all MCP servers and rediscover tools. Use this after adding, removing, or reconfiguring an MCP server. Accepts an optional `now` or `always` argument.
+  </Card>
+</CardGroup>

@@ -1,0 +1,168 @@
+---
+title: "Keyboard shortcuts and key rebinding in Herm terminal UI"
+sidebarTitle: "Keybindings"
+description: "View and remap every Herm action with /keys, understand the leader-key prefix system, and see the full default keybinding table grouped by scope."
+---
+
+Every action in Herm is backed by a named, rebindable key chord. The default bindings are designed to stay out of your way — a two-stroke **leader prefix** (default `Ctrl+X`) gates the most common session-management actions so they never collide with your text input. You can view all bindings at any time, remap anything that conflicts with your muscle memory, and your changes persist automatically in `~/.hermes/herm/tui.json`.
+
+## Opening the keybinding editor
+
+<Steps>
+  <Step title="Open /keys from the composer">
+    Type `/keys` in the composer and press `Return`. The keybinding editor opens as an overlay.
+  </Step>
+  <Step title="Browse and select an action">
+    Use the arrow keys to scroll through the action list. Each row shows the action name, its current chord, and a short description.
+  </Step>
+  <Step title="Press the new chord">
+    Highlight the action you want to change and press the key or sequence you want to assign. Herm records the chord immediately.
+  </Step>
+  <Step title="Changes save automatically">
+    Your rebindings are written to `~/.hermes/herm/tui.json` as soon as you make them. There is no separate save step.
+  </Step>
+</Steps>
+
+You can also press `F1` at any time to open a read-only quick-reference of all active bindings.
+
+## The leader key
+
+The **leader key** is a two-stroke prefix that gates a large set of session and UI actions. It works like Vim's leader or tmux's prefix: you press the leader first, release it, then press the action key. The default leader is `Ctrl+X`.
+
+For example, the default binding to open a new session is `<leader>n`, which means: press `Ctrl+X`, then press `n`.
+
+The leader key itself is rebindable — change the `leader` action in `/keys` to any chord you prefer. A popular alternative is `Ctrl+\` for users who find `Ctrl+X` conflicts with their readline habits.
+
+<Note>
+  Secondary alternates are shown in parentheses throughout the table below. For example, `editor.open` advertises `<leader>e` but also accepts `Ctrl+G` as a fallback so existing muscle memory keeps working while you learn the leader pattern.
+</Note>
+
+## OpenCode-compatible bindings
+
+If you are migrating from OpenCode, Herm ships a compatible binding preset. Run `/keys` and look for the **OpenCode** import option to apply those chords in one step without remapping each action individually.
+
+## Default keybindings
+
+The following tables list every default binding, grouped by scope. **Global** bindings fire regardless of which tab is focused. **List** bindings are active whenever a navigable list is on screen. **Composer** bindings apply inside the text input. **Tab-specific** bindings are only active when that particular tab has focus.
+
+### Global
+
+| Action | Default chord | Description |
+|---|---|---|
+| `leader` | `Ctrl+X` | Leader prefix (two-stroke gate) |
+| `app.exit` | `Ctrl+C` | Quit Herm |
+| `input.clear` | `Ctrl+C` | Clear input (fires when buffer is empty) |
+| `app.suspend` | `Ctrl+Z` | Suspend to shell |
+| `app.redraw` | `Ctrl+L` | Clear and force-repaint terminal |
+| `app.sidebar` | `<leader>b` | Toggle sidebar |
+| `palette.open` | `Ctrl+K` | Open command palette |
+| `help.open` | `F1` | Keyboard shortcuts reference |
+| `tab.next` | `Alt+Right` | Next tab |
+| `tab.prev` | `Alt+Left` | Previous tab |
+| `focus.cycle` | `Tab` | Cycle focus (double-tap → composer) |
+| `editor.open` | `<leader>e` / `Ctrl+G` | Open `$EDITOR` on current prompt |
+| `reply.copy` | `<leader>y` / `Ctrl+Y` | Copy last assistant reply |
+| `clipboard.attach` | `Ctrl+V` | Attach clipboard image |
+| `queue.flush` | `<leader>u` | Interrupt and send queued prompt now |
+| `session.interrupt` | `Escape` | Interrupt streaming (double-tap) |
+| `session.new` | `<leader>n` | Start a new session |
+| `session.redo` | `<leader>r` | Redo last undone message |
+| `session.compress` | `<leader>c` | Compress context |
+| `session.steer` | `<leader>s` | Inject a steering note mid-turn |
+| `session.timeline` | `<leader>g` | Open session timeline |
+| `input.stash` | `<leader>p` | Stash the current prompt draft |
+| `theme.pick` | `<leader>t` | Open the theme picker |
+| `model.pick` | `<leader>m` | Switch active model |
+| `status.open` | `<leader>i` | Show status panel |
+
+### List
+
+These bindings are shared across all tabs and dialogs that display a scrollable list.
+
+| Action | Default chord | Description |
+|---|---|---|
+| `list.up` | `Up` | Move selection up |
+| `list.down` | `Down` | Move selection down |
+| `list.pageUp` | `Page Up` | Page up |
+| `list.pageDown` | `Page Down` | Page down |
+| `list.home` | `Home` | Jump to first item |
+| `list.end` | `End` | Jump to last item |
+| `list.activate` | `Return` | Activate / open selected item |
+| `list.delete` | `d` / `Delete` | Delete selected item |
+| `list.refresh` | `r` | Reload the list |
+| `list.new` | `n` | Create a new item |
+| `list.search` | `/` | Filter the list |
+| `list.toggle` | `Space` | Toggle selected item |
+
+### Dialog
+
+These bindings are active when a modal overlay is open.
+
+| Action | Default chord | Description |
+|---|---|---|
+| `dialog.accept` | `Return` | Accept / confirm |
+| `dialog.cancel` | `Escape` | Cancel or close |
+| `dialog.confirm` | `y` | Answer yes |
+| `dialog.deny` | `n` | Answer no |
+| `dialog.copy` | `c` | Copy dialog body |
+
+### Composer
+
+These bindings fire inside the text input area.
+
+| Action | Default chord | Description |
+|---|---|---|
+| `input.submit` | `Return` | Send message |
+| `input.newline` | `Shift+Return` / `Ctrl+Return` / `Alt+Return` / `Ctrl+J` | Insert a newline |
+
+### Tab-specific
+
+The following bindings only apply when the named tab is focused.
+
+<Accordion title="Sessions tab">
+
+| Action | Default chord | Description |
+|---|---|---|
+| `sessions.rename` | `Ctrl+R` | Rename the selected session |
+| `sessions.prev` | `Left` | Walk lineage back (continues from) |
+| `sessions.next` | `Right` | Walk lineage forward (compressed to) |
+
+</Accordion>
+
+<Accordion title="Agents tab">
+
+| Action | Default chord | Description |
+|---|---|---|
+| `agents.kill` | `k` | Kill the selected subagent |
+| `agents.history` | `h` | Open subagent spawn history |
+| `agents.install` | `i` | Install a distribution |
+
+</Accordion>
+
+<Accordion title="Config tab">
+
+| Action | Default chord | Description |
+|---|---|---|
+| `config.save` | `Ctrl+S` | Write config to disk |
+| `config.mode` | `m` | Toggle form view ↔ YAML view |
+
+</Accordion>
+
+<Accordion title="Eikon tab">
+
+| Action | Default chord | Description |
+|---|---|---|
+| `eikon.save` | `Ctrl+S` | Save the current eikon |
+| `eikon.marketplace` | `m` | Open the eikon marketplace |
+
+</Accordion>
+
+## Where rebindings are saved
+
+All customized chords are stored in:
+
+```
+~/.hermes/herm/tui.json
+```
+
+You can inspect this file to see only your overrides — actions you have not changed are not written, so the file stays small. Deleting an entry from the file reverts that action to its default chord on the next launch.

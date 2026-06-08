@@ -1,0 +1,138 @@
+---
+title: "Themes and skins: personalize your Herm terminal UI"
+sidebarTitle: "Themes"
+description: "Browse 40+ built-in themes, open the live picker with /theme or <leader>t, fix tmux color issues, and switch skins that bundle a theme and eikon preset."
+---
+
+Herm ships with more than 40 built-in color themes and a live picker that lets you preview and apply any of them without restarting. You can open the picker at any time from the composer, flip through themes instantly, and your choice is saved automatically to `~/.hermes/herm/tui.json` so it persists across sessions. For a more complete brand change, the `/skin` command goes a step further — it swaps the theme *and* an eikon preset together as a coordinated look.
+
+## Opening the theme picker
+
+There are two ways to open the theme picker:
+
+- **Slash command:** type `/theme` in the composer and press `Return`.
+- **Leader key:** press `Ctrl+X` then `t` (the default leader chord).
+
+Once the picker is open, arrow keys scroll through the list and `Return` applies the highlighted theme. Your selection is written to `~/.hermes/herm/tui.json` immediately.
+
+<Tip>
+  The default theme at first boot is **tokyonight**. If you want to go back to it at any time, open the picker and select it or run `/theme` and choose it from the list.
+</Tip>
+
+## Built-in themes
+
+The table below lists every built-in theme in alphabetical order, along with its primary accent color and a rough style description to help you choose without opening the picker.
+
+| Theme | Primary | Style / mood |
+|---|---|---|
+| `ares` | `#C7A96B` | Warm deep-red, ancient-hero feel |
+| `aura` | `#a277ff` | Dark purple, minimal |
+| `ayu` | `#59C2FF` | Cool blue-on-dark, Japanese-inspired |
+| `carbonfox` | `#33b1ff` | IBM Carbon dark, charcoal base |
+| `catppuccin` | `#89b4fa` | Pastel dark (Mocha variant) |
+| `catppuccin-frappe` | `#8da4e2` | Pastel dark (Frappé variant) |
+| `catppuccin-macchiato` | `#8aadf4` | Pastel dark (Macchiato variant) |
+| `charizard` | `#FFD39A` | Fiery orange-on-dark brown |
+| `cobalt2` | `#0088ff` | Deep cobalt blue, vivid cyan accents |
+| `cursor` | `#88c0d0` | Near-black, Nord-inspired |
+| `daylight` | `#233662` | **Light-friendly** — deep navy accent, bright-environment optimized |
+| `default` | `#FFD700` | Hermes gold on deep navy |
+| `dracula` | `#bd93f9` | Classic purple-and-pink dark |
+| `everforest` | `#a7c080` | Muted green forest tones |
+| `flexoki` | `#DA702C` | Ink-print contrast, warm orange |
+| `github` | `#58a6ff` | **Light-friendly** — GitHub dark palette |
+| `gruvbox` | `#83a598` | Retro warm-toned dark |
+| `kanagawa` | `#7E9CD8` | Muted blue inspired by Japanese art |
+| `lucent-orng` | `#EC5B2B` | Transparent background, bright orange |
+| `material` | `#82aaff` | Material Design deep-teal dark |
+| `matrix` | `#2eff6a` | Neon green on near-black |
+| `mercury` | `#8da4f5` | **Light-friendly** — indigo-tinted dark navy |
+| `mono` | `#e6edf3` | Monochrome, minimal |
+| `monokai` | `#66d9ef` | Classic Monokai cyan and green |
+| `nightowl` | `#82AAFF` | Deep midnight blue with purple accents |
+| `nord` | `#88C0D0` | Arctic cool blues and greens |
+| `one-dark` | `#61afef` | Atom One Dark blue |
+| `opencode` | `#fab283` | OpenCode-inspired warm amber |
+| `orng` | `#EC5B2B` | Vivid orange on true black |
+| `osaka-jade` | `#2DD5B7` | Deep green-teal, forest night |
+| `palenight` | `#82aaff` | Material Palenight soft blue |
+| `poseidon` | `#A9DFFF` | Deep ocean blue |
+| `rosepine` | `#9ccfd8` | Rosé Pine muted pastels |
+| `sisyphus` | `#F5F5F5` | Near-white on charcoal |
+| `slate` | `#7eb8f6` | Dark navy-slate with blue accents |
+| `solarized` | `#268bd2` | Solarized dark cyan |
+| `synthwave84` | `#36f9f6` | Neon cyan and purple retro-wave |
+| `tokyonight` | `#82aaff` | Tokyo Night blue-on-dark *(default)* |
+| `vercel` | `#0070F3` | Vercel black with electric blue |
+| `vesper` | `#FFC799` | Warm amber on near-black |
+| `warm-lightmode` | `#9D681D` | **Light-friendly** — warm amber on pale |
+| `zenburn` | `#8cd0d3` | Low-contrast, easy on eyes |
+
+### Light themes
+
+If text appears hard to read against your terminal background — especially inside tmux or a terminal with a forced dark background — try one of the light-optimized themes:
+
+<CardGroup cols={2}>
+  <Card title="daylight" icon="sun">
+    Deep navy accent on a dark base — optimized for bright ambient environments.
+  </Card>
+  <Card title="mercury" icon="circle-half-stroke">
+    Indigo-tinted dark navy — softer contrast than pure black.
+  </Card>
+  <Card title="github" icon="github">
+    GitHub's own dark palette, familiar and well-tested.
+  </Card>
+  <Card title="warm-lightmode" icon="mug-hot">
+    Warm amber tones, easiest on eyes in daylit rooms.
+  </Card>
+</CardGroup>
+
+## Fixing colors in tmux
+
+<Note>
+  If colors look washed out, banded, or wrong inside tmux, the issue is almost always terminal type negotiation — not the theme itself.
+</Note>
+
+Add the following line to your `~/.tmux.conf` and then reload (`tmux source ~/.tmux.conf`):
+
+```bash
+set -g default-terminal "tmux-256color"
+```
+
+This tells tmux to advertise full 256-color support to the programs running inside it, which Herm needs to render theme colors accurately.
+
+## Skins
+
+A **skin** bundles a color theme *and* an eikon preset into a single named look. Running `/skin` lets you switch both at once so the full visual identity — colors, agent avatar, and UI branding — changes together.
+
+```
+/skin [name]
+```
+
+Available built-in skin names:
+
+| Skin | Character |
+|---|---|
+| `default` | Standard Hermes look |
+| `ares` | Warm red, warrior persona |
+| `mono` | Monochrome, minimal |
+| `slate` | Cool dark-navy |
+| `daylight` | Light, airy |
+| `warm-lightmode` | Warm light palette |
+| `poseidon` | Deep ocean blue |
+| `sisyphus` | High-contrast charcoal |
+| `charizard` | Fiery orange |
+
+<Tip>
+  You can also type `/skin` with no argument to see the popover and tab-complete through available skin names.
+</Tip>
+
+## Where preferences are saved
+
+Theme and skin selections are written to:
+
+```
+~/.hermes/herm/tui.json
+```
+
+You can inspect or hand-edit this file to set a theme without opening Herm — just set the `"theme"` key to any name from the table above and save. The change takes effect the next time Herm starts.

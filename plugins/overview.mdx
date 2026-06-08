@@ -1,0 +1,123 @@
+---
+title: "Herm plugin system overview: extend the terminal UI"
+sidebarTitle: "Overview"
+description: "Overview of the Herm plugin system — what plugins can do, current limitations (bundled-only), and how to get started building your first plugin."
+---
+
+Herm's plugin system lets you extend the terminal UI without touching core shell code. A plugin is a single TypeScript module that exports an `{ id, tui }` object. When Herm activates the plugin it calls `tui(api)`, your code registers whatever it needs through the `api` object, and everything you register is automatically cleaned up the moment the plugin deactivates. There is no teardown boilerplate to write.
+
+## What plugins can do
+
+Plugins have five extension points to work with:
+
+<AccordionGroup>
+  <Accordion title="Slots — inject UI into fixed locations">
+    Slots are host-managed regions of the shell where plugins can paint content. Each slot receives a typed props object so your renderer always knows the current session id, tab index, or streaming state. Available slots:
+
+    | Slot name | Where it renders | Props |
+    |---|---|---|
+    | `app_bottom` | One-row gutter below the composer | `{ sid, tab, streaming }` |
+    | `sidebar_content` | Stacked section inside the right sidebar | `{ sid }` |
+    | `sidebar_footer` | Pinned row at the bottom of the sidebar | `{ sid }` |
+    | `prompt_right` | Inline, right of the composer input | `{ sid }` |
+    | `splash_footer` | Below the splash logo on an empty session | `{}` |
+
+    The host decides the *composition mode* for each slot call site:
+
+    - **`append`** (default) — your contribution stacks after lower-`order` plugins.
+    - **`replace`** — your contribution supplants the host's default child.
+    - **`single_winner`** — only the lowest-`order` contribution renders; the rest are dropped.
+  </Accordion>
+
+  <Accordion title="Routes — add a top-level tab">
+    Register a named route and Herm adds it as a navigable tab after the five built-in groups (Chat, Sessions, Profiles & Automation, Config, Eikon). You can navigate to it programmatically with `api.route.navigate("YourTabName")`.
+  </Accordion>
+
+  <Accordion title="Commands — add entries to the command palette">
+    Register one or more commands and they appear in the Ctrl+K palette under any category label you choose. Each command gets a stable `value` string and an `onSelect` callback.
+  </Accordion>
+
+  <Accordion title="Events — react to the gateway stream">
+    Subscribe to the live gateway event stream with `api.event.on(fn)`. React to any `GatewayEvent` type — show a toast, update local state, or trigger a navigation.
+  </Accordion>
+
+  <Accordion title="Eikon rasterizers — custom image-to-text backends">
+    Contribute a new rasterizer to the Eikon Studio tab. You supply a `name`, a `knobs` schema (cycle options, toggles, sliders), an `available()` check, and an async `render(win, knobs)` function. The Studio handles all spatial work and renders your knob controls generically.
+  </Accordion>
+</AccordionGroup>
+
+## Current limitation: bundled plugins only
+
+External loading from npm packages or `~/.herm/plugins/` is on the roadmap but not yet available. Today every plugin must be compiled into the Herm bundle. Wiring yours in takes two steps:
+
+<Steps>
+  <Step title="Drop your file into the bundled directory">
+    Create your plugin module at `src/plugins/bundled/hello.tsx`. It must export a default `HermPlugin` value with a unique `id` and a `tui` function.
+
+    ```tsx
+    import type { HermPlugin } from "../types"
+
+    const plugin: HermPlugin = {
+      id: "acme.hello",
+      tui(api) {
+        api.slots.register({
+          order: 50,
+          slots: {
+            app_bottom: () => (
+              <text fg={api.theme.current.textMuted}>hello from acme</text>
+            ),
+          },
+        })
+      },
+    }
+
+    export default plugin
+    ```
+  </Step>
+
+  <Step title="Import and register it in internal.ts">
+    Open `src/plugins/internal.ts` and append your import to the `INTERNAL` array:
+
+    ```ts
+    import hello from "./bundled/hello"
+
+    export const INTERNAL: ReadonlyArray<HermPlugin> = [
+      clock,
+      files,
+      hello,   // ← your plugin
+    ]
+    ```
+
+    The order in `INTERNAL` is the activation order and the default precedence when two plugins contribute to the same slot at equal `order`.
+  </Step>
+</Steps>
+
+<Note>
+  Plugin `id` values must be globally unique. Use a reverse-DNS-style prefix so yours will not collide with bundled plugins or future community plugins — for example `acme.hello`, not just `hello`.
+</Note>
+
+## Default enablement
+
+Plugins are enabled by default. If you want your plugin to ship turned off — useful during early development — set `enabled: false` on the plugin object:
+
+```ts
+const plugin: HermPlugin = {
+  id: "acme.hello",
+  enabled: false,   // ships disabled; user must opt in
+  tui(api) { /* … */ },
+}
+```
+
+User toggles (via the plugin manager UI) override the compiled default and persist across launches.
+
+## Where plugin state persists
+
+All persistent data lives in a single file: `~/.hermes/herm/tui.json` (or `$HERM_CONFIG_DIR/tui.json` when that variable is set). Herm uses this file for:
+
+- **`plugin.enabled`** — per-plugin on/off overrides keyed by plugin `id`.
+- **Plugin KV data** — anything you write with `api.kv.set(key, value)`, stored under your plugin's `id` namespace automatically. You never need to prefix keys yourself.
+
+## Next steps
+
+- **[API Reference](/plugins/api-reference)** — complete type signatures for every surface on the `api` object, all slot names and props, and the lifecycle model.
+- **[Examples](/plugins/examples)** — copy-pasteable code for common patterns: status bars, custom tabs, event listeners, persistent settings, and custom rasterizers.

@@ -1,0 +1,102 @@
+---
+title: "Herm Sessions — browse, resume, and inspect history"
+sidebarTitle: "Sessions"
+description: "Browse, resume, rename, and branch sessions in Herm. Inspect active context segments, review token analytics, and restore earlier states with rollback."
+---
+
+The Sessions tab gives you full control over your conversation history without dropping back to the shell. Every session you have ever started with Hermes Agent is listed here, browsable, resumable, and inspectable. Switch to it with **Alt+2** or by typing `/sessions` in the chat composer.
+
+The tab has three sub-tabs — **List**, **Context**, and **Analytics** — navigated with **Shift+Left / Shift+Right**.
+
+## Session List
+
+The List sub-tab shows all past and current sessions in reverse-chronological order.
+
+<CardGroup cols={2}>
+  <Card title="Resume a session" icon="arrow-right">
+    Highlight a session and press `Enter` to resume it in the Chat tab.
+  </Card>
+  <Card title="New session" icon="plus">
+    Press `n` to start a new session immediately.
+  </Card>
+  <Card title="Rename / retitle" icon="pen">
+    Press `Ctrl+R` to rename the selected session inline.
+  </Card>
+  <Card title="Delete" icon="trash">
+    Press `d` to delete the selected session. You will be asked to confirm.
+  </Card>
+  <Card title="Reload" icon="rotate">
+    Press `r` to refresh the session list from the gateway.
+  </Card>
+  <Card title="Search" icon="magnifying-glass">
+    Press `/` to filter sessions by title or content.
+  </Card>
+</CardGroup>
+
+### Walking session lineage
+
+Sessions in Herm can have a lineage — a parent/child chain that forms when you branch or compress a session. Use the **Left** and **Right** arrow keys to walk backward and forward along this lineage chain, letting you trace how a long-running conversation evolved over time.
+
+## Context sub-tab
+
+The Context sub-tab shows the active context segments loaded for the current session — the files, diffs, memory entries, and prior conversation chunks that Hermes Agent is holding in its context window. Use this view to understand exactly what the agent can "see" during a turn.
+
+The **context gauge** in the sidebar mirrors this: it fills as the context window grows and gives you a quick visual indicator of how close you are to the model's context limit before you even switch tabs.
+
+## Analytics sub-tab
+
+The Analytics sub-tab shows per-session statistics drawn from the gateway:
+
+- **Token usage** — prompt tokens and completion tokens for each turn
+- **Context fill** — how much of the model's context window was used
+- **Cost** — estimated cost per turn and session total
+- **Model stats** — which model was active and any overrides applied
+
+Use this view to track expensive sessions, identify turns where context grew unexpectedly, or compare cost across different model configurations.
+
+## Session management slash commands
+
+You can trigger all of the most important session operations from the chat composer without switching tabs.
+
+<Tabs>
+  <Tab title="Session lifecycle">
+    | Command | Description |
+    |---------|-------------|
+    | `/new` | Start a new session |
+    | `/title [text]` | Set a title for the current session |
+    | `/history` | Open a server-side transcript viewer |
+    | `/resume` | Resume a previous session by selection |
+    | `/branch` | Create a branch of the current session |
+    | `/compress` | Compress the context window to free space |
+    | `/undo` | Undo the last message exchange |
+    | `/redo` | Re-send the last undone message |
+  </Tab>
+  <Tab title="Checkpoints">
+    | Command | Description |
+    |---------|-------------|
+    | `/rollback` | Browse checkpoints and restore an earlier state |
+  </Tab>
+  <Tab title="Prompt drafts">
+    | Command | Description |
+    |---------|-------------|
+    | `/stash` | Park the current prompt draft for later |
+    | `/stash pop` | Restore the most recently stashed draft |
+    | `/stash list` | List all stashed drafts |
+  </Tab>
+</Tabs>
+
+## Rollback checkpoints
+
+Hermes Agent saves checkpoints as a session progresses. `/rollback` opens a checkpoint browser where you can scroll through the history of a session and restore it to any earlier point. This is useful when an agent run goes off-track and you want to replay from a known-good state.
+
+<Warning>
+  Restoring a checkpoint replaces the session's current state. The turns after the checkpoint are removed. Use `/branch` first if you want to preserve the current direction while also exploring a rollback.
+</Warning>
+
+## Context compression
+
+As a long session approaches the model's context limit, the context gauge in the sidebar will fill toward capacity. Run `/compress` to let Hermes Agent summarise older turns and free up context window space without starting a new session. You can also use **`<leader>c`** as a keyboard shortcut for this action.
+
+<Tip>
+  Navigate directly to the Context sub-tab with `/context` and to the Analytics sub-tab with `/analytics` (or `/insights`) from the chat composer.
+</Tip>

@@ -1,0 +1,110 @@
+---
+title: "Herm Chat tab — stream, voice, and slash commands"
+sidebarTitle: "Chat"
+description: "Stream markdown responses, attach files with @ references, view inline images and diff chips, use voice mode, and run slash commands from the Chat tab."
+---
+
+The Chat tab is the heart of Herm. It occupies the left pane and is the first thing you see when you launch `herm`. Every conversation with Hermes Agent flows through this interface: you type in the composer at the bottom, responses stream in above it with full markdown rendering, and the sidebar alongside it shows context window state and model details.
+
+## Streaming responses
+
+Herm renders each response as it arrives. You don't wait for the full reply before reading — tokens stream in and the display updates continuously. The renderer handles:
+
+- **Markdown** — headings, lists, bold, code blocks, blockquotes, and tables all render natively in the terminal.
+- **LaTeX-to-unicode** — inline and block math expressions are converted to unicode characters so formulae are readable without a browser.
+- **Inline images** — when Hermes Agent produces or references an image and you have [`chafa`](https://hpjansson.org/chafa/) installed, the image renders inline inside the chat pane.
+
+<Tip>
+  If images appear as broken placeholders or raw escape sequences, install `chafa`. On macOS: `brew install chafa`. On Debian/Ubuntu: `apt install chafa`.
+</Tip>
+
+## Diff chips
+
+When Hermes Agent edits files during a task, Herm surfaces each change as a **diff chip** — a compact, tabbed frame in the message stream that shows exactly what was added or removed. You can navigate the chip's tabs to review each changed file individually without leaving the terminal.
+
+## Expandable tool calls
+
+Tool invocations are shown inline in the message stream as collapsed entries. Press **Enter** (or click) on any tool call entry to expand it and inspect the full input and output. This lets you follow exactly what the agent is doing at each step without the raw JSON overwhelming the conversation.
+
+## Thought cloud
+
+For reasoning models that expose their thinking steps, Herm shows a **thought cloud** above the final response. This collapsible block contains the model's intermediate reasoning so you can audit its logic before it commits to an answer.
+
+## Composer
+
+The composer sits at the bottom of the Chat tab. The status dot to the left indicates readiness: green means ready, yellow means generating, red means disconnected.
+
+| Key | Action |
+|-----|--------|
+| `Enter` | Send message |
+| `Shift+Enter` | Insert a newline (multi-line message) |
+| `Ctrl+V` | Attach a clipboard image |
+| `↑` / `↓` | Navigate prompt history |
+| `/` | Open the slash command popover |
+| `@` | Open the file/diff reference picker |
+
+<Note>
+  While a response is streaming you can still type in the composer. Your input queues automatically. Press `Enter` to add it to the queue; it sends as soon as the current turn finishes. The composer placeholder changes to *"Type to queue… (Enter queues, click chip to edit)"* to remind you of this.
+</Note>
+
+## @ references — attaching file and diff context
+
+Type `@` anywhere in the composer to open the **@ reference picker**. This lets you attach local files or diffs directly to your message so Hermes Agent has precise context without you pasting content manually.
+
+<Steps>
+  <Step title="Type @ in the composer">
+    A popover appears listing files and diffs that match the text you type after `@`. Use `↑` / `↓` to navigate the list.
+  </Step>
+  <Step title="Select a file or diff">
+    Press `Enter` to confirm the selection. It is inserted as a styled chip in the composer. You can attach multiple references in a single message.
+  </Step>
+  <Step title="Send your message">
+    Press `Enter` to send. Herm expands the chips and forwards the referenced content as context alongside your prompt.
+  </Step>
+</Steps>
+
+You can also paste a file path directly into the composer. Herm detects it, stats the file via the gateway, and — if it is an image — attaches it as a preview chip automatically. Pastes of five or more lines are collapsed into a `[Pasted #N …]` placeholder that Hermes Agent expands server-side.
+
+## Voice mode
+
+Voice mode lets you speak prompts instead of typing them and optionally have responses read back aloud.
+
+```
+/voice on       # Start recording
+/voice off      # Stop recording
+/voice tts      # Toggle text-to-speech readback
+/voice status   # Show current voice state
+```
+
+<CardGroup cols={2}>
+  <Card title="/voice on" icon="microphone">
+    Begin recording. Herm captures audio and transcribes it into the composer when you stop.
+  </Card>
+  <Card title="/voice off" icon="microphone-slash">
+    Stop recording and submit the transcribed text.
+  </Card>
+  <Card title="/voice tts" icon="volume-high">
+    Toggle text-to-speech. When enabled, agent replies are read aloud as they stream in.
+  </Card>
+  <Card title="/voice status" icon="circle-info">
+    Print the current recording and TTS state to the chat.
+  </Card>
+</CardGroup>
+
+## Useful slash commands in Chat
+
+Type `/` in the composer to open the slash popover and browse all available commands. A few that are especially useful while chatting:
+
+| Command | Description |
+|---------|-------------|
+| `/new` | Start a fresh session |
+| `/clear` | Clear the visible chat messages |
+| `/steer [text]` | Inject a steering note mid-turn without interrupting the agent |
+| `/model` | Switch the active model |
+| `/theme` | Browse built-in color themes |
+| `/keys` | View and rebind keyboard shortcuts |
+| `/queue [text]` | Queue a prompt for the next idle turn |
+| `/stash` | Park the current prompt draft for later |
+| `/stash pop` | Restore the most recently stashed draft |
+
+Press `Ctrl+K` at any time to open the **command palette** for a searchable view of all actions.

@@ -1,0 +1,105 @@
+---
+title: "Herm Environment Variables and Configuration Reference"
+sidebarTitle: "Configuration"
+description: "All environment variables Herm reads, what each one does, and how to relocate Herm's preferences and input history to a custom path."
+---
+
+Herm is designed to work with zero configuration out of the box. As long as Hermes Agent is installed and your Hermes home directory exists at `~/.hermes`, you can run `herm` with no extra setup. Every environment variable described on this page is **optional** — set them only when the defaults do not match your environment.
+
+## Environment variables
+
+The four variables below are the complete set that Herm reads at startup. None of them have required values; Herm falls back to sensible defaults for each one.
+
+<ParamField query="HERMES_HOME" type="string">
+  The path to your Hermes data directory. Herm reads profiles, sessions, eikons, and other Hermes-managed data from this location.
+
+  **Default:** `~/.hermes`
+
+  Set this when your Hermes home lives somewhere other than the default — for example, on a secondary drive or inside a shared mount.
+
+  ```bash
+  HERMES_HOME=/data/hermes-home
+  ```
+</ParamField>
+
+<ParamField query="HERMES_AGENT_ROOT" type="string">
+  The path to the `hermes-agent` source tree. Herm uses this to locate and launch the gateway subprocess.
+
+  **Default:** `$HERMES_HOME/hermes-agent` (where Homebrew and `hermes update` place it)
+
+  Set this only if you are working from a development clone of Hermes Agent or have installed it in a non-standard location.
+
+  ```bash
+  HERMES_AGENT_ROOT=/home/me/src/hermes-agent
+  ```
+</ParamField>
+
+<ParamField query="HERMES_PYTHON" type="string">
+  The Python interpreter Herm uses when spawning the gateway subprocess.
+
+  **Default:** Herm tries each of the following in order and uses the first one it finds: `$VIRTUAL_ENV` python, `<root>/venv`, `<root>/.venv`, then `python3`.
+
+  Set this explicitly when you need a specific interpreter — for instance, a system Python that has Hermes Agent's dependencies installed, or a pyenv shim.
+
+  ```bash
+  HERMES_PYTHON=/usr/bin/python3
+  ```
+</ParamField>
+
+<ParamField query="HERM_CONFIG_DIR" type="string">
+  The directory where Herm stores its own preferences and input history.
+
+  **Default:** `$HERMES_HOME/herm`
+
+  Set this to separate Herm's configuration from the rest of your Hermes home, or to share a config directory across machines via a synced path.
+
+  ```bash
+  HERM_CONFIG_DIR=~/.config/herm
+  ```
+</ParamField>
+
+## Where Herm stores preferences
+
+Herm writes its own runtime preferences to a single JSON file:
+
+```
+$HERM_CONFIG_DIR/tui.json
+```
+
+This file stores themes, keybinding overrides, and other runtime preferences. You can edit it by hand, but the recommended way to change themes and keybindings is through the TUI itself — use `/theme` to pick a colour scheme or `/keys` to view and rebind shortcuts. Changes are written to `tui.json` automatically.
+
+If `HERM_CONFIG_DIR` is not set, the file lives at `~/.hermes/herm/tui.json`.
+
+## Using a `.env` file
+
+Because Herm runs on Bun, it **automatically loads a `.env` file** from the working directory when you run the `herm` command. You can use this to set any of the variables above without exporting them in your shell profile.
+
+Create a `.env` file alongside your project or in the directory from which you typically launch Herm:
+
+```bash .env
+# All variables are optional — herm runs without any of them.
+
+# Relocate the Hermes data directory (profiles, sessions, eikons, etc.).
+# Default: ~/.hermes
+# HERMES_HOME=/path/to/alt-hermes-home
+
+# Override the hermes-agent source tree location.
+# Default: $HERMES_HOME/hermes-agent
+# HERMES_AGENT_ROOT=/path/to/hermes-agent
+
+# Python interpreter for the gateway subprocess.
+# Default: tries $VIRTUAL_ENV → <root>/venv → <root>/.venv → python3
+# HERMES_PYTHON=/usr/bin/python3
+
+# Relocate Herm's own prefs and input history.
+# Default: $HERMES_HOME/herm
+# HERM_CONFIG_DIR=/path/to/alt-herm-config
+```
+
+<Note>
+  The `.env` auto-load behaviour is provided by Bun, not by Herm itself. If you run Herm through a different Node package runner, `.env` loading depends on that runner's own behaviour.
+</Note>
+
+<Warning>
+  Never commit a `.env` file that contains real credentials or sensitive paths to a public repository. The example above shows all variables commented out for safety — uncomment only the ones you actually need.
+</Warning>

@@ -1,0 +1,349 @@
+---
+title: "Herm plugin API reference: HermPlugin and HermPluginApi"
+sidebarTitle: "API Reference"
+description: "Complete reference for the HermPlugin interface and the api object — all extension points, lifecycle methods, and UI utilities available to plugins."
+---
+
+Every Herm plugin is a TypeScript module that exports a value conforming to the `HermPlugin` interface. When activated, the runtime calls your `tui(api)` function and hands you a fully-typed `HermPluginApi` object. This page documents every field on both interfaces in the order you are most likely to reach for them.
+
+## HermPlugin interface
+
+The top-level export your module must provide.
+
+```ts
+export type HermPlugin = {
+  /** Globally unique identifier. Use a reverse-DNS prefix, e.g. "acme.hello". */
+  id: string
+
+  /**
+   * Default enablement when no user override exists in tui.json.
+   * Omit (or set true) to ship enabled; set false to ship disabled.
+   */
+  enabled?: boolean
+
+  /**
+   * Called once on activation. Register slots, routes, commands, and
+   * event listeners through the api object. May be async.
+   */
+  tui(api: HermPluginApi): void | Promise<void>
+}
+```
+
+<Note>
+  If `tui()` throws, activation fails for that plugin only. The error is logged and the next plugin in the activation queue proceeds normally.
+</Note>
+
+---
+
+## Low-level renderer access
+
+```ts
+api.renderer: CliRenderer
+```
+
+A reference to the underlying `CliRenderer` from `@opentui/core`. This is rarely needed directly — slots, routes, and the other high-level surfaces cover almost every use case. It is exposed for advanced scenarios such as querying terminal dimensions or triggering a full repaint outside of a React render cycle.
+
+---
+
+## Slots
+
+Slots are the primary way to inject UI into the Herm shell. You register a map of slot renderers; each renderer is a function that receives a context and typed props and returns a React node.
+
+```ts
+api.slots.register(p: {
+  order?: number
+  slots: Partial<{
+    [K in keyof Slots]: (ctx: SlotCtx, props: Slots[K]) => ReactNode
+  }>
+}): () => void
+```
+
+`order` controls precedence when multiple plugins contribute to the same slot. Lower numbers render first (or win, for `single_winner` slots). Defaults to `0`.
+
+### Available slots
+
+| Name | Props | Host composition mode |
+|---|---|---|
+| `app_bottom` | `{ sid: string; tab: number; streaming: boolean }` | `single_winner` |
+| `sidebar_content` | `{ sid: string }` | `append` |
+| `sidebar_footer` | `{ sid: string }` | `append` |
+| `prompt_right` | `{ sid: string }` | `append` |
+| `splash_footer` | `{}` | `append` |
+
+- **`app_bottom`** — a one-row gutter that sits directly below the message composer. Because the host uses `single_winner`, only the registered plugin with the lowest `order` value renders here; all others are dropped.
+- **`sidebar_content`** — a vertically stacked section inside the right sidebar. Multiple plugins can contribute; they stack in `order` order.
+- **`sidebar_footer`** — a pinned row at the very bottom of the sidebar.
+- **`prompt_right`** — an inline region to the right of the composer text input.
+- **`splash_footer`** — the area below the Herm splash logo shown on a fresh, empty session.
+
+### Composition modes
+
+| Mode | Behaviour |
+|---|---|
+| `append` | Your content stacks after the host default and lower-`order` plugin contributions. |
+| `replace` | Your content replaces the host's default child entirely. |
+| `single_winner` | Only the contribution with the lowest `order` renders; all others are silently dropped. |
+
+A slot renderer that throws is caught by a per-plugin error boundary. The slot renders empty (or falls back to the host default) and the rest of the shell is unaffected.
+
+### SlotCtx
+
+The first argument passed to every slot renderer.
+
+```ts
+export type SlotCtx = {
+  readonly theme: Theme
+}
+```
+
+`ctx.theme` is a live getter — it reads the same source as `api.theme.current`. In practice you will usually close over `api` from your `tui()` factory rather than using `ctx` directly.
+
+---
+
+## Routes
+
+Register a top-level tab that appears after the five built-in groups.
+
+```ts
+api.route.register(defs: ReadonlyArray<{
+  name: string          // tab label and navigation key
+  description?: string
+  render: () => ReactNode
+}>): () => void
+
+api.route.navigate(name: string, sub?: number): void
+api.route.current: string | undefined  // current tab name
+```
+
+`name` is both the label shown in the tab bar and the string you pass to `navigate()`. Navigation to built-in tabs by their slash name (e.g. `"memory"`) also works through the same `navigate()` call.
+
+---
+
+## Commands
+
+Add entries to the Ctrl+K command palette.
+
+```ts
+api.command.register(cmds: ReadonlyArray<{
+  title: string         // displayed in the palette
+  value: string         // stable identifier, e.g. "acme.scratch.open"
+  description?: string
+  category?: string     // palette group label, e.g. "Plugin"
+  onSelect: () => void  // called when the user picks this entry
+}>): () => void
+```
+
+---
+
+## Events
+
+Subscribe to the live gateway event stream.
+
+```ts
+api.event.on(fn: (ev: GatewayEvent) => void): () => void
+```
+
+The return value is a disposer. Because the scope auto-tracks it you do not need to call it yourself — deactivation handles cleanup. `GatewayEvent` is the full union from `src/context/wire.ts`; check `ev.type` to filter.
+
+---
+
+## UI utilities
+
+All modal helpers return Promises and are safe to `await` inside `tui()` or any async function your plugin calls.
+
+### Toasts
+
+```ts
+api.ui.toast(opts: {
+  variant?: "info" | "error" | "warning" | "success"
+  title?: string
+  message: string
+}): void
+```
+
+### Confirmation dialog
+
+```ts
+api.ui.confirm(opts: {
+  title: string
+  body: string
+  danger?: boolean   // renders the confirm button in the error colour
+}): Promise<boolean>
+```
+
+### Text prompt
+
+```ts
+api.ui.prompt(opts: {
+  title: string
+  label?: string
+  initial?: string
+}): Promise<string | null>  // null = user cancelled
+```
+
+### Alert
+
+```ts
+api.ui.alert(title: string, body: string): void
+```
+
+### Select
+
+```ts
+api.ui.select(opts: {
+  title: string
+  options: ReadonlyArray<SelectOption>
+  placeholder?: string
+}): Promise<SelectOption | null>  // null = user cancelled
+```
+
+### Dialog stack (advanced)
+
+```ts
+api.ui.dialog.replace(node: ReactNode, onClose?: () => void): void
+api.ui.dialog.clear(): void
+api.ui.dialog.open(): void
+```
+
+Use `dialog.replace()` when you want to push a fully custom component onto the host's dialog stack. The host manages focus and escape-key dismissal.
+
+---
+
+## Persistent key-value store
+
+```ts
+api.kv.get<T>(key: string, fallback: T): T
+api.kv.set(key: string, value: unknown): void
+```
+
+The store is **automatically namespaced by your plugin id** — you never need to prefix keys. Data persists in `~/.hermes/herm/tui.json` (or `$HERM_CONFIG_DIR/tui.json`) under `plugin[your-id]`. Use `get` with a typed fallback to handle first-launch defaults safely.
+
+---
+
+## Theme
+
+```ts
+api.theme.current: Theme   // live snapshot of all colour tokens
+api.theme.name: string     // e.g. "dark-default"
+api.theme.mode: "dark" | "light"
+api.theme.set(name: string): boolean   // returns false if name unknown
+api.theme.has(name: string): boolean
+```
+
+Always read colours from `api.theme.current.*` (e.g. `.text`, `.textMuted`, `.accent`, `.backgroundElement`, `.error`, `.border`). Never use raw hex literals — they bypass the live theme and will look wrong when the user switches themes.
+
+---
+
+## Keybindings
+
+```ts
+api.keys.match(id: string, key: ParsedKey): boolean
+api.keys.print(id: string): string   // human-readable label for a binding
+```
+
+`api.keys` is **read-only**. Plugins cannot register new keybindings today; see [Roadmap](#roadmap).
+
+---
+
+## Gateway client
+
+```ts
+api.client.request<T>(method: string, params: unknown): Promise<T>
+```
+
+Direct RPC access to the Hermes gateway. Use this for anything that would otherwise require `api.state` (which is not yet available).
+
+---
+
+## Eikon rasterizers
+
+```ts
+api.eikon.rasterizer.register(r: Rasterizer): () => void
+```
+
+Contribute a custom image-to-text backend to the Eikon Studio tab. The `Rasterizer` type is defined in `src/utils/eikon-render.ts`:
+
+```ts
+type Rasterizer = {
+  name: string
+  knobs: Record<string, KnobDef>   // "cycle" | "toggle" | "slider"
+  available: () => true | string   // true = available; string = reason it is not
+  render(
+    win: Window,
+    knobs: Record<string, unknown>,
+    signal?: AbortSignal,
+  ): Promise<{ frames: string[][] } | { err: string }>
+}
+```
+
+The Studio handles zoom, pan, playback, and all spatial pre-processing. It passes your `render()` a pre-cropped grayscale `Window` — you only decide how luminance maps to glyphs. Knob schemas (`cycle`, `toggle`, `slider`) are rendered generically in the Studio UI.
+
+---
+
+## Lifecycle
+
+### How activation and deactivation work
+
+On activation the runtime creates a **scope** for your plugin and calls `tui(api)`. Every `api.*.register()` and `api.event.on()` call routes its returned disposer through the scope automatically — you do not hold or invoke disposers yourself.
+
+On deactivation the scope:
+
+1. Aborts `api.lifecycle.signal`.
+2. Runs every tracked disposer and every `onDispose` callback in **reverse registration order**, sharing a five-second budget.
+
+### lifecycle.signal
+
+```ts
+api.lifecycle.signal: AbortSignal
+```
+
+An `AbortSignal` that fires the moment the plugin is deactivated. Race long-running async work against it:
+
+```ts
+tui(api) {
+  void fetch(url, { signal: api.lifecycle.signal }).then(/* … */)
+}
+```
+
+### lifecycle.onDispose
+
+```ts
+api.lifecycle.onDispose(fn: () => void | Promise<void>): () => void
+```
+
+Register teardown for resources the scope cannot see — intervals, subprocesses, file watchers. Returns a canceller that drops the callback without running it.
+
+```ts
+tui(api) {
+  const timer = setInterval(poll, 1000)
+  api.lifecycle.onDispose(() => clearInterval(timer))
+}
+```
+
+---
+
+## Rendering constraints
+
+Herm uses the **OpenTUI React renderer**, not React DOM. The rules are different from web React:
+
+- `<text>` children must be strings, `<span>`, `<strong>`, or `<u>` — never `<box>` or a nested `<text>`.
+- Use `<box>` for layout and `<scrollbox scrollY>` for scrollable regions.
+- Mouse handlers belong on `<box>` or `<text>` nodes — not on `<span>`.
+- `wrapMode` accepts `"none"`, `"word"`, or `"char"`.
+- All colours must come from `api.theme.current.*`. Raw hex literals bypass the live theme.
+
+Do not import directly from `src/theme`, `src/keys`, `src/context`, or `src/ui`. Always route through `api`. This requirement exists so your plugin will remain loadable once external loading lands.
+
+---
+
+## Roadmap
+
+The following surfaces have seams in the codebase but are not yet available to plugins:
+
+| Feature | Status |
+|---|---|
+| **External loading** (npm packages, `~/.herm/plugins/`) | Not yet wired |
+| **Key registration** (`api.keys` is read-only) | Not yet available |
+| **`api.state`** — direct home-store access | Use `api.client.request()` in the meantime |
+| **`api.theme.install`** — plugin-shipped theme JSON | Not yet available |
+| **`sidebar_content`, `sidebar_footer`, `prompt_right`, `splash_footer` slots** | Declared but not yet mounted at all host call sites |

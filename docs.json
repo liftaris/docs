@@ -1,0 +1,121 @@
+{
+  "$schema": "https://mintlify.com/docs.json",
+  "theme": "willow",
+  "name": "Herm",
+  "description": "Documentation for Herm — the terminal UI for Hermes Agent.",
+  "colors": {
+    "primary": "#755824",
+    "light": "#ee9c03",
+    "dark": "#090908"
+  },
+  "favicon": "https://media.brand.dev/823ddaa7-db19-483c-b274-cbaf526d5561.png",
+  "icons": {
+    "library": "tabler"
+  },
+  "styling": {
+    "eyebrows": "breadcrumbs"
+  },
+  "contextual": {
+    "options": ["copy", "view", "assistant", "mcp", "add-mcp"]
+  },
+  "navigation": {
+    "global": {
+      "anchors": [
+        {
+          "anchor": "Home",
+          "icon": "house",
+          "href": "/"
+        },
+        {
+          "anchor": "GitHub",
+          "icon": "github",
+          "href": "https://github.com/liftaris/herm"
+        }
+      ]
+    },
+    "directory": "card",
+    "groups": [
+      {
+        "group": "Get Started",
+        "icon": "rocket",
+        "expanded": true,
+        "pages": [
+          "introduction",
+          "quickstart",
+          "configuration"
+        ]
+      },
+      {
+        "group": "Core Features",
+        "icon": "terminal",
+        "expanded": true,
+        "pages": [
+          "features/chat",
+          "features/sessions",
+          "features/automation",
+          "features/config"
+        ]
+      },
+      {
+        "group": "Eikon Avatars",
+        "icon": "image",
+        "expanded": true,
+        "pages": [
+          "eikon/overview",
+          "eikon/gallery",
+          "eikon/studio",
+          "eikon/marketplace"
+        ]
+      },
+      {
+        "group": "Customization",
+        "icon": "palette",
+        "expanded": true,
+        "pages": [
+          "customization/themes",
+          "customization/keybindings",
+          "customization/slash-commands"
+        ]
+      },
+      {
+        "group": "Plugins",
+        "icon": "plug",
+        "expanded": true,
+        "pages": [
+          "plugins/overview",
+          "plugins/api-reference",
+          "plugins/examples"
+        ]
+      },
+      {
+        "group": "Troubleshooting",
+        "icon": "life-buoy",
+        "expanded": true,
+        "pages": [
+          "troubleshooting/faq",
+          "troubleshooting/common-issues"
+        ]
+      }
+    ]
+  },
+  "logo": {
+    "light": "https://media.brand.dev/78bd2afc-d387-429e-932c-182e70b1e489.svg",
+    "dark": "https://media.brand.dev/78bd2afc-d387-429e-932c-182e70b1e489.svg"
+  },
+  "navbar": {
+    "links": [],
+    "primary": {
+      "type": "github",
+      "href": "https://github.com/liftaris/herm"
+    }
+  },
+  "footer": {
+    "socials": {
+      "github": "https://github.com/liftaris/herm"
+    }
+  },
+  "banner": {
+    "content": "You're not supposed to be here, but congrats on finding this page! This site is a work in progress",
+    "type": "warning"
+  }
+}

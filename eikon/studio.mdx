@@ -1,0 +1,137 @@
+---
+title: "Create and tune avatar eikons in Herm Eikon Studio"
+sidebarTitle: "Studio"
+description: "Use Eikon Studio to create and tune avatars — attach image or video source, adjust contrast and spatial controls, and save with Ctrl+S."
+---
+
+Eikon Studio is a full-featured, keyboard-driven editor for creating and tuning your avatars. It opens directly inside the Eikon tab and gives you a live animated preview of your work alongside a Settings panel packed with knob controls. When you press **Ctrl+S**, Herm renders all six avatar states through the active rasterizer and writes both the `.eikon` file and your workspace state to disk in one shot.
+
+## Opening Studio
+
+Navigate to Studio in any of the following ways:
+
+- Press **Alt+5** to open the Eikon tab, then select **Studio** from the sub-tab strip.
+- Type `/studio` in the chat input to jump directly.
+- Press **e** while an eikon is selected in the Gallery to open that eikon in Studio.
+
+Studio automatically opens the currently active eikon on mount. If no eikon is active yet, press **Enter** to create or select one.
+
+## Layout
+
+Studio is divided into three panes. Press **Tab** (or **Shift+Tab** to reverse) to cycle focus between them:
+
+<CardGroup cols={3}>
+  <Card title="Preview" icon="eye">
+    A live 48×24 animated preview of the current state. Supports mouse drag to pan, scroll wheel to pan/zoom, and a minimap overlay in the bottom-right corner showing your current viewport.
+  </Card>
+  <Card title="Settings (Knobs)" icon="sliders">
+    The main control panel. Contains the eikon selector, rasterizer picker, source attachment, tonal controls (contrast, invert, flip), and any additional knobs exposed by the active rasterizer.
+  </Card>
+  <Card title="States Strip" icon="film">
+    A row of six thumbnail previews — one per avatar state. Lets you select which state to edit and trigger per-state source or knob overrides.
+  </Card>
+</CardGroup>
+
+<Note>
+  On wide terminals (≥120 columns), Preview and Settings are shown side-by-side. On narrower terminals, they stack vertically. The States Strip always appears below both.
+</Note>
+
+## Settings pane: knob reference
+
+Use **↑↓** to move between rows in the Settings pane. A one-sentence description of the selected row appears at the bottom of the panel.
+
+### Eikon and rasterizer
+
+| Row | Description |
+|---|---|
+| **eikon** | The eikon you are currently editing. Press **Enter** to switch to another eikon, create a new one, or install from an external source. |
+| **rasterizer** | The engine that converts your source media into text art. Press **Enter** to open the rasterizer picker. Available rasterizers are listed; unavailable ones show a warning. |
+
+### Source
+
+| Row | Description |
+|---|---|
+| **source** | The image or video file the avatar renders from. Press **Enter** to attach a local file, generate one (if image or video generation is configured), or clear the current source. |
+| **fetch source** | Shown when no local source exists but a remote source URL is known. Press **Enter** to download the published source media so you can re-tune it locally. |
+
+### Tonal controls
+
+These controls adjust the source pixels before rasterizing and apply globally across all states unless you have set a per-state override.
+
+| Knob | Type | Description |
+|---|---|---|
+| **contrast** | Slider | Spreads pixel values around their mean. `×1.00` leaves the source as-is; higher values sharpen, lower values flatten. Use **←/→** to adjust. |
+| **invert** | Toggle | Swaps light↔dark in the source pixels. Turn this on for a light subject on a dark terminal background. Press **Enter** or **Space** to toggle. |
+| **flip** | Cycle | Mirrors the source horizontally (`h`), vertically (`v`), both (`hv`), or not at all (`none`). Press **←/→** or **Enter** to cycle. |
+
+### Actions
+
+| Row | When shown | Description |
+|---|---|---|
+| **tune** (`knobsfor`) | When a source is attached | Toggles whether the settings below apply to all states or only the currently selected state. Press **Enter** or **←/→** to switch. |
+| **reset** | When a source is attached | Restores all rasterizer settings to defaults and drops per-state overrides. Requires confirmation. |
+| **revert** | When there are unsaved edits | Discards all unsaved changes and reloads the eikon from disk. |
+
+## Preview pane controls
+
+While the Preview pane is focused:
+
+| Key / Action | Effect |
+|---|---|
+| **Space** | Toggle play / pause |
+| **↑ / ↓** | Move selection between pan-x, pan-y, zoom, and fps rows |
+| **← / →** | Adjust the selected spatial control |
+| **Shift + ← / →** | Fine-adjust pan (0.01 steps) |
+| **Mouse drag** | Pan the frame |
+| **Scroll wheel** | Pan vertically |
+| **Shift + Scroll** | Pan horizontally |
+| **Ctrl + Scroll** | Zoom in / out |
+
+The **minimap** in the corner of the preview shows a half-block representation of the full source extent. The shaded region indicates your current viewport position. Spatial controls are only active when a local source file is attached and `ffmpeg` is available.
+
+<Tip>
+  If your preview shows `(baked)` in the title, the Studio is displaying pre-rendered frames from the `.eikon` file because no local source is attached yet. Use **fetch source** or the **source** row to attach a file and unlock live editing.
+</Tip>
+
+## States strip
+
+The strip at the bottom of Studio shows six thumbnails — one per avatar lifecycle state: `idle`, `listening`, `thinking`, `speaking`, `working`, and `error`. Use **← / →** when the strip is focused to cycle between states. Press **Enter** on a state to open its action menu:
+
+- **Source…** — Attach a source file specific to this state.
+- **Tune this state only / Clear override** — Fork the knob settings for this state independently from the base, or remove the fork to revert to shared settings.
+
+States with a per-state source file show **own src**; states with only a knob override show **forked**.
+
+## Saving
+
+Press **Ctrl+S** (or your configured `eikon.save` key) to save. Herm:
+
+1. Renders all six states through the active rasterizer.
+2. Writes the packed `.eikon` file.
+3. Writes `studio.json` with your current rasterizer, spatial, and knob settings.
+4. Sets the saved eikon as the active avatar.
+5. Bumps the revision counter so the Gallery and sidebar reflect the change immediately.
+
+<Note>
+  You must have a source file attached before you can save. If no source is attached, Herm shows a warning and does not write to disk.
+</Note>
+
+If you try to navigate away with unsaved changes, Herm prompts you to **Save**, **Discard**, or **Keep editing**. Pressing **Esc** on a dirty session also triggers this prompt.
+
+## Submitting to the Marketplace
+
+Press **u** from Studio to submit the current eikon to the community Marketplace. Herm shows a preflight bundle preview before submitting. Eikons that were installed from the Marketplace cannot be re-submitted until you create a local draft.
+
+## Keyboard reference
+
+| Key | Action |
+|---|---|
+| **Tab / Shift+Tab** | Cycle focus between panes |
+| **↑ / ↓** | Move selection (Knobs and Preview panes) |
+| **← / →** | Adjust selected knob or spatial control |
+| **Enter** (`list.activate`) | Activate / open a select or action row |
+| **Space** (`list.toggle`) | Toggle a knob or play/pause preview |
+| `list.new` | New eikon |
+| `eikon.save` (default **Ctrl+S**) | Save |
+| **u** | Submit to Marketplace |
+| **Esc** | Prompt to save or discard unsaved edits |

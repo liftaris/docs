@@ -1,0 +1,70 @@
+---
+title: "Eikon avatars: customize your Hermes agent persona"
+sidebarTitle: "Overview"
+description: "An overview of the Eikon avatar system in Herm — what eikons are, how they appear in chat, and the three tabs: Gallery, Studio, Marketplace."
+---
+
+Eikon is Herm's avatar system: an animated character rendered directly in the chat sidebar that gives your Hermes agent a visual persona. Each eikon is a self-contained `.eikon` file — a text-based NDJSON format — stored under `~/.hermes/eikons/<name>/` alongside an optional `source/` folder containing the original image or video the avatar was rendered from. Herm ships with bundled eikons so you have something to start with, and the broader ecosystem lets you browse, install, and share community-created avatars without leaving the terminal.
+
+## How eikons work
+
+When Herm renders your chat sidebar, it reads the currently active eikon — identified by name in your preferences — and plays it as an animated text-art avatar. The animation is produced by a **rasterizer** that converts a source image or video into character-art frames. Two rasterizers are available:
+
+<CardGroup cols={2}>
+  <Card title="chafa" icon="image">
+    The default rasterizer. Produces rich, colourful output using the `chafa` command-line tool. Requires `chafa` to be on your `PATH`.
+  </Card>
+  <Card title="native" icon="terminal">
+    A built-in fallback rasterizer with no external dependencies. Always available, even without `chafa` installed.
+  </Card>
+</CardGroup>
+
+Herm automatically selects the best available rasterizer. You can change it at any time from inside Eikon Studio.
+
+## The Eikon tab
+
+Press **Alt+5** to open the Eikon tab. It contains three sub-tabs, each reachable by keyboard or slash command:
+
+<CardGroup cols={3}>
+  <Card title="Gallery" icon="images" href="/eikon/gallery">
+    Browse every installed eikon, activate one for the sidebar, install from a local file, or submit your own to the Marketplace.
+  </Card>
+  <Card title="Studio" icon="paintbrush" href="/eikon/studio">
+    A full-featured editor for creating and tuning eikons — image source, knob controls, a live preview pane, and a per-state strip.
+  </Card>
+  <Card title="Marketplace" icon="store" href="/eikon/marketplace">
+    Browse and install community-shared eikons from the public catalog. Accessible from Gallery via **M**, or directly with `/marketplace`.
+  </Card>
+</CardGroup>
+
+## Slash commands
+
+You can jump directly to any Eikon sub-tab from the chat input without touching the mouse or cycling through tabs:
+
+| Command | Destination |
+|---|---|
+| `/gallery` | Eikon → Gallery |
+| `/studio` | Eikon → Studio |
+| `/marketplace` | Eikon → Marketplace |
+
+## File layout
+
+Every user-created or installed eikon lives in its own folder under your Hermes home:
+
+```
+~/.hermes/eikons/
+└── <name>/
+    ├── <name>.eikon   # packed NDJSON — the shippable avatar file
+    ├── studio.json    # your local editor settings (rasterizer, knobs, sources)
+    └── source/        # base.<ext>, <state>.<ext> — your original media
+```
+
+The `.eikon` file is self-contained and portable. The `source/` folder and `studio.json` are local-only — they hold your editable workspace and are not required by other installs.
+
+<Note>
+  Bundled eikons ship directly with Herm and do not have a `source/` folder or a `studio.json`. You can edit a bundled eikon by creating a local copy in Studio.
+</Note>
+
+## Discovery on the web
+
+[eikon.liftaris.dev](https://eikon.liftaris.dev) is a browser-based mirror and discovery site for the public catalog. Use it to browse and preview entries from a browser, then install natively through Herm. All install, activate, and management actions happen inside Herm — the website is a read-only mirror.

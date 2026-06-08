@@ -1,0 +1,133 @@
+---
+title: "Slash commands reference: all built-in Herm TUI commands"
+sidebarTitle: "Slash Commands"
+description: "Type / in the composer to open the slash popover and explore every built-in client and session command with aliases and arguments."
+---
+
+Slash commands give you quick, keyboard-driven access to Herm's full feature surface without leaving the composer. Typing `/` in the input area opens a live popover that filters commands as you type, shows descriptions and argument hints, and supports tab-completion for subcommands. Press `Return` on any highlighted entry — or finish typing the full command and press `Return` — to execute it.
+
+## How the popover works
+
+Start typing `/` followed by the command name. The popover narrows the list in real time across both command names and their aliases. For commands that accept subcommands (for example `/voice on`), continue typing after a space and the popover switches to subcommand completions automatically.
+
+```
+/theme          → opens the theme picker
+/reload-mcp now → restarts MCP servers immediately
+/voice on       → enables voice recording
+```
+
+<Note>
+  The popover merges **local commands** (handled directly by the Herm client) with **gateway commands** fetched from `GET /api/commands` — including skills, plugins, and MCP prompts registered with your Hermes gateway. The tables on this page cover the built-in local commands. Gateway commands appear in the same popover once the connection is established.
+</Note>
+
+## Command categories
+
+Commands are grouped into four categories:
+
+<CardGroup cols={2}>
+  <Card title="Client" icon="display">
+    Actions handled entirely inside the Herm TUI: themes, skins, UI toggles, clipboard, voice, and diagnostics.
+  </Card>
+  <Card title="Session" icon="terminal">
+    Commands that act on the active Hermes Agent session: steering, queueing, reloading, goal control, and browser management.
+  </Card>
+  <Card title="Info" icon="circle-info">
+    Read-only status panels: usage stats, profile details, session history, and version/path information.
+  </Card>
+  <Card title="Exit" icon="door-open">
+    Commands that close or restart Herm.
+  </Card>
+</CardGroup>
+
+## Client commands
+
+These commands are intercepted by the Herm client and never forwarded to the gateway.
+
+| Command | Aliases | Args | Description |
+|---|---|---|---|
+| `/clear` | — | — | Clear all chat messages from the current view |
+| `/new` | `reset` | — | Start a fresh session |
+| `/theme` | — | — | Open the color theme picker |
+| `/keys` | — | — | Open the keybinding editor |
+| `/help` | — | — | Show keyboard shortcut reference |
+| `/logs` | — | — | Show the gateway stderr log |
+| `/title` | — | `[text]` | Set a title for the current session |
+| `/rollback` | — | — | Browse and restore session checkpoints |
+| `/skin` | — | `[name]` | Switch to a named skin (theme + eikon preset) |
+| `/chafa` | — | `<path>` | Render an image in the terminal via chafa |
+| `/splash` | — | — | Show the Herm launch splash screen |
+| `/stash` | — | `[pop\|list]` | Park the current prompt draft; restore it later |
+| `/voice` | — | `[on\|off\|status\|tts]` | Toggle or query voice recording |
+
+## Session commands
+
+These commands act on the live Hermes Agent session.
+
+| Command | Aliases | Args | Description |
+|---|---|---|---|
+| `/steer` | — | `[text]` | Inject a note into the current turn without interrupting it |
+| `/reload` | — | — | Hot-reload `~/.hermes/.env` to pick up new API keys |
+| `/reload-mcp` | — | `[now\|always]` | Restart MCP servers and rediscover their tools |
+| `/reload-skills` | `reload_skills` | — | Re-scan `~/.hermes/skills/` for added or removed skills |
+| `/queue` | `q` | `[text]` | Queue a prompt to be sent on the next idle turn |
+| `/redo` | — | — | Re-send the last undone message |
+| `/browser` | — | `[connect\|disconnect\|status] [url]` | Connect or disconnect a Chrome DevTools Protocol browser |
+| `/goal` | — | `[text\|done\|pause\|resume\|clear\|status]` | Set or control the current session goal |
+
+<Accordion title="Goal subcommands">
+
+The `/goal` command accepts several subcommands:
+
+| Subcommand | Effect |
+|---|---|
+| `[text]` | Set the session goal to the provided text |
+| `done` | Mark the current goal as complete |
+| `pause` | Pause goal tracking |
+| `resume` | Resume a paused goal |
+| `clear` | Clear the goal entirely |
+| `status` | Print the current goal and its state |
+
+</Accordion>
+
+<Accordion title="Browser subcommands">
+
+The `/browser` command manages a CDP browser connection:
+
+| Subcommand | Effect |
+|---|---|
+| `connect [url]` | Connect to a running Chrome/Chromium instance at the given CDP URL |
+| `disconnect` | Disconnect the active browser session |
+| `status` | Show whether a browser is connected and its URL |
+
+</Accordion>
+
+## Info commands
+
+These commands open read-only panels; they do not modify session state.
+
+| Command | Aliases | Args | Description |
+|---|---|---|---|
+| `/history` | — | — | Browse the server-side session transcript |
+| `/status` | — | — | Show Herm version, active model, and key file paths |
+| `/usage` | — | — | Display token counts, context fill percentage, and cost |
+| `/profile` | — | — | Show details about the currently active Hermes profile |
+
+## Exit commands
+
+| Command | Aliases | Args | Description |
+|---|---|---|---|
+| `/quit` | `exit` | — | Exit Herm |
+
+## Gateway and skill commands
+
+In addition to the built-in commands listed above, the popover also surfaces commands registered on your Hermes gateway. These include:
+
+- **Skills** — custom scripts in `~/.hermes/skills/` that expose slash commands.
+- **Plugins** — gateway-side plugins that register named commands.
+- **MCP prompts** — prompt templates served by connected MCP servers and surfaced as `/mcp-prompt-name` entries.
+
+Gateway commands are labeled with their source (`skill`, `plugin`, or `mcp`) in the popover. They are forwarded to `POST /api/slash` rather than handled locally. Use `/reload-skills` or `/reload-mcp` to refresh the list after adding new skills or MCP servers.
+
+<Tip>
+  If the gateway is unreachable at startup, the popover falls back to showing only local commands. Gateway commands appear automatically once the connection is restored — no restart required.
+</Tip>

@@ -1,0 +1,56 @@
+---
+title: "Herm: Keyboard-Driven Terminal UI for Hermes Agent"
+sidebarTitle: "Introduction"
+description: "Herm is a keyboard-driven TUI for Hermes Agent. Manage chat, sessions, profiles, config, and avatars without leaving your terminal."
+---
+
+Herm is a keyboard-driven **terminal UI (TUI)** that puts Hermes Agent's full operator surface inside a single shell window. It is a client for the Hermes Agent gateway — not a separate agent runtime or model provider. While Hermes Agent handles inference and tool execution, Herm gives you a unified dashboard to chat, manage sessions, switch profiles, inspect configuration, run kanban work, and customize avatar personas, all without reaching for a browser or scattering work across shell commands.
+
+## Why use Herm?
+
+Most day-to-day Hermes workflows touch several different surfaces: a chat session, a profile config file, a cron schedule, maybe a kanban board. Herm collapses those surfaces into one place.
+
+- **Stay in the terminal** while chatting with Hermes Agent, resuming past sessions, and inspecting live context.
+- **Operate your Hermes home** through dedicated dashboard tabs for profiles, skills, cron jobs, toolsets, config, env vars, and memory — no manual file editing required.
+- **Run agentic work through kanban** with board and task detail views, diagnostics, and dispatch controls built into the same shell you use for chat.
+- **Make the shell yours** with rebindable keys, a command palette (`Ctrl+K`), slash commands, a theme picker, and in-session profile switching.
+
+## Tab overview
+
+Herm organises its interface into five top-level tabs. Press <kbd>Alt</kbd>\+<kbd>←</kbd> / <kbd>Alt</kbd>\+<kbd>→</kbd> to cycle between them, or jump directly with <kbd>Alt</kbd>\+<kbd>1</kbd> through <kbd>Alt</kbd>\+<kbd>5</kbd>.
+
+| # | Tab | What it contains |
+| --- | --- | --- |
+| 1 | **Chat** | Main chat interface — stream responses, add file context, run slash commands |
+| 2 | **Sessions** | Session list, context inspector, and analytics |
+| 3 | **Profiles & Automation** | Profile switching, cron jobs, and kanban boards |
+| 4 | **Config** | Config, env vars, skills, toolsets, and memory |
+| 5 | **Eikon** | Avatar gallery, studio, and marketplace |
+
+Each tab exposes its own sub-tab strip for deeper views. For example, the **Config** tab contains sub-tabs for Config, Skills, Toolsets, Env, and Memory, all reachable from inside the same window.
+
+## Requirements
+
+Before you install Herm, make sure the following are in place:
+
+- **Hermes Agent** — Herm is a client for the Hermes Agent gateway. Without a working Hermes install there is nothing for Herm to connect to. See the [Hermes Agent repository](https://github.com/NousResearch/hermes-agent) for setup instructions.
+- **Bun ≥ 1.3.0** (or a Node package runner such as `npx`) — Herm is built on Bun and its `package.json` enforces `bun >= 1.3.0`.
+- **A Hermes home directory** — by default Herm expects Hermes data to live at `~/.hermes`. If yours is elsewhere, point `HERMES_HOME` at the right path before launching.
+
+<CardGroup cols={2}>
+  <Card title="Quick Start" icon="rocket" href="/quickstart">
+    Install Herm and send your first message in minutes.
+  </Card>
+
+  <Card title="Chat" icon="message" href="/features/chat">
+    Streaming responses, file context, slash commands, and more.
+  </Card>
+
+  <Card title="Eikon Avatars" icon="user-astronaut" href="/eikon/overview">
+    Build, browse, and install avatar personas from the marketplace.
+  </Card>
+
+  <Card title="Configuration" icon="gear" href="/configuration">
+    Environment variables, preferences file, and custom paths.
+  </Card>
+</CardGroup>
