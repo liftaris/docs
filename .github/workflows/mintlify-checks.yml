@@ -27,6 +27,8 @@ jobs:
           node-version: 22
       - name: Install Mintlify CLI
         run: npm install -g mint
+      - name: Validate Python maintenance scripts
+        run: python -m py_compile scripts/sync-herm-docs.py scripts/check-external-links.py
       - name: Validate build
         run: mint validate
       - name: Check internal links, anchors, redirects, and snippets
