@@ -1,7 +1,7 @@
 ---
-title: "Herm Environment Variables and Configuration Reference"
+title: "Herm configuration"
 sidebarTitle: "Configuration"
-description: "All environment variables Herm reads, what each one does, and how to relocate Herm's preferences and input history to a custom path."
+description: "Environment variables Herm reads, local preference paths, and when to use overrides."
 ---
 
 Herm is designed to work with zero configuration out of the box. As long as Hermes Agent is installed and your Hermes home directory exists at `~/.hermes`, you can run `herm` with no extra setup. Every environment variable described on this page is **optional**: set them only when the defaults do not match your environment.
@@ -54,7 +54,7 @@ Because Herm runs on Bun, it **automatically loads a `.env` file** from the work
 Create a `.env` file alongside your project or in the directory from which you typically launch Herm:
 
 ```bash .env
-# All variables are optional: herm runs without any of them.
+# These overrides are optional. Herm uses defaults when they are unset.
 
 # Relocate the Hermes data directory (profiles, sessions, eikons, etc.).
 # Default: ~/.hermes
@@ -78,7 +78,7 @@ Create a `.env` file alongside your project or in the directory from which you t
 </Note>
 
 <Warning>
-  Never commit a `.env` file that contains real credentials or sensitive paths to a public repository. The example above shows all variables commented out for safety: uncomment only the ones you actually need.
+  Do not commit a `.env` file that contains real credentials or sensitive paths to a public repository. The example above shows all variables commented out for safety: uncomment only the ones you actually need.
 </Warning>
 
 ## Related docs

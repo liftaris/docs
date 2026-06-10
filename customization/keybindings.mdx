@@ -1,10 +1,10 @@
 ---
 title: "Keyboard shortcuts and key rebinding in Herm terminal UI"
 sidebarTitle: "Keybindings"
-description: "View and remap every Herm action with /keys, understand the leader-key prefix system, and see the full default keybinding table grouped by scope."
+description: "View default Herm shortcuts, understand the leader-key prefix, and remap chords with /keys."
 ---
 
-Every action in Herm is backed by a named, rebindable key chord. The default bindings are designed to stay out of your way: a two-stroke **leader prefix** (default `Ctrl+X`) gates the most common session-management actions so they never collide with your text input. You can view all bindings at any time, remap anything that conflicts with your muscle memory, and your changes persist automatically in `~/.hermes/herm/tui.json`.
+Herm actions use named key chords. The default leader prefix is `Ctrl+X`; press it first, then press the action key. Use `/keys` to inspect or remap shortcuts. Changes persist in `~/.hermes/herm/tui.json`.
 
 ## Opening the keybinding editor
 
@@ -23,7 +23,7 @@ Every action in Herm is backed by a named, rebindable key chord. The default bin
   </Step>
 </Steps>
 
-You can also press `F1` at any time to open a read-only quick-reference of all active bindings.
+Press `F1` to open a read-only shortcut reference.
 
 ## The leader key
 
@@ -142,7 +142,7 @@ The following reference is generated from `src/keys/catalog.ts` in the Herm sour
 
 ## Where rebindings are saved
 
-All customized chords are stored in:
+Customized chords are stored in:
 
 ```text
 ~/.hermes/herm/tui.json
