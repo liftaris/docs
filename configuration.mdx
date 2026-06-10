@@ -8,61 +8,37 @@ Herm is designed to work with zero configuration out of the box. As long as Herm
 
 ## Environment variables
 
-The four variables below are the complete set that Herm reads at startup. None of them have required values; Herm falls back to sensible defaults for each one.
+Herm's environment-variable surface is generated from the Herm source repo. Most users only need `HERMES_HOME`, `HERMES_AGENT_ROOT`, `HERMES_PYTHON`, or `HERM_CONFIG_DIR` when their install lives outside the default paths.
 
-<ParamField query="HERMES_HOME" type="string">
-  The path to your Hermes data directory. Herm reads profiles, sessions, eikons, and other Hermes-managed data from this location.
-
-  **Default:** `~/.hermes`
-
-  Set this when your Hermes home lives somewhere other than the default — for example, on a secondary drive or inside a shared mount.
-
-  ```bash
-  HERMES_HOME=/data/hermes-home
-  ```
-</ParamField>
-
-<ParamField query="HERMES_AGENT_ROOT" type="string">
-  The path to the `hermes-agent` source tree. Herm uses this to locate and launch the gateway subprocess.
-
-  **Default:** `$HERMES_HOME/hermes-agent` (where Homebrew and `hermes update` place it)
-
-  Set this only if you are working from a development clone of Hermes Agent or have installed it in a non-standard location.
-
-  ```bash
-  HERMES_AGENT_ROOT=/home/me/src/hermes-agent
-  ```
-</ParamField>
-
-<ParamField query="HERMES_PYTHON" type="string">
-  The Python interpreter Herm uses when spawning the gateway subprocess.
-
-  **Default:** Herm tries each of the following in order and uses the first one it finds: `$VIRTUAL_ENV` python, `<root>/venv`, `<root>/.venv`, then `python3`.
-
-  Set this explicitly when you need a specific interpreter — for instance, a system Python that has Hermes Agent's dependencies installed, or a pyenv shim.
-
-  ```bash
-  HERMES_PYTHON=/usr/bin/python3
-  ```
-</ParamField>
-
-<ParamField query="HERM_CONFIG_DIR" type="string">
-  The directory where Herm stores its own preferences and input history.
-
-  **Default:** `$HERMES_HOME/herm`
-
-  Set this to separate Herm's configuration from the rest of your Hermes home, or to share a config directory across machines via a synced path.
-
-  ```bash
-  HERM_CONFIG_DIR=~/.config/herm
-  ```
-</ParamField>
+{/* BEGIN AUTO-GENERATED: env-vars */}
+| Variable | Purpose |
+|---|---|
+| `CONTROL` | Enable the local control server when set to `1`. |
+| `CONTROL_BIND` | Control server bind address. Defaults to `127.0.0.1`. |
+| `CONTROL_PORT` | Control server port. Defaults to `7777`. |
+| `EDITOR` | Fallback editor for opening prompt drafts. |
+| `EIKON_URL` | Legacy marketplace catalog override used by the Marketplace tab. |
+| `HERMES_AGENT_ROOT` | Hermes Agent source/install tree used to launch the gateway. |
+| `HERMES_CWD` | Working directory passed to the gateway session. |
+| `HERMES_HOME` | Hermes data directory. Defaults to `~/.hermes`. |
+| `HERMES_KANBAN_BOARD` | Default kanban board filter/selection. |
+| `HERMES_KANBAN_BUSY_TIMEOUT_MS` | Kanban busy timeout in milliseconds. |
+| `HERMES_KANBAN_HOME` | Pin the kanban data home. |
+| `HERMES_PYTHON` | Python interpreter used for the gateway subprocess. |
+| `HERMES_TUI_NO_CONFIRM` | Skip Herm client-side destructive slash confirmations when set to `1`. |
+| `HERM_CONFIG_DIR` | Herm TUI preferences directory. Defaults to `$HERMES_HOME/herm`. |
+| `HERM_EIKON_MARKETPLACE` | Override the public Eikon catalog index URL. |
+| `HERM_IO_INLINE` | Inline I/O payload mode for Herm internal I/O. |
+| `PERF` | Enable performance logging or verbose performance mode. |
+| `VIRTUAL_ENV` | Preferred Python virtualenv when resolving the gateway interpreter. |
+| `VISUAL` | Preferred editor for opening prompt drafts. |
+{/* END AUTO-GENERATED: env-vars */}
 
 ## Where Herm stores preferences
 
 Herm writes its own runtime preferences to a single JSON file:
 
-```
+```text
 $HERM_CONFIG_DIR/tui.json
 ```
 

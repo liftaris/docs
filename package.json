@@ -1,0 +1,11 @@
+{
+  "private": true,
+  "scripts": {
+    "sync": "python scripts/sync-herm-docs.py",
+    "validate": "mint validate",
+    "links": "mint broken-links --check-anchors --check-redirects --check-snippets",
+    "a11y": "mint a11y",
+    "check": "npm run validate && npm run links && npm run a11y"
+  },
+  "devDependencies": {}
+}

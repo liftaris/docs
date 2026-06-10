@@ -10,7 +10,7 @@ Slash commands give you quick, keyboard-driven access to Herm's full feature sur
 
 Start typing `/` followed by the command name. The popover narrows the list in real time across both command names and their aliases. For commands that accept subcommands (for example `/voice on`), continue typing after a space and the popover switches to subcommand completions automatically.
 
-```
+```text
 /theme          → opens the theme picker
 /reload-mcp now → restarts MCP servers immediately
 /voice on       → enables voice recording
@@ -39,40 +39,58 @@ Commands are grouped into four categories:
   </Card>
 </CardGroup>
 
-## Client commands
+## Built-in local commands
 
-These commands are intercepted by the Herm client and never forwarded to the gateway.
+The following reference is generated from `src/app/slashCommands.ts` in the Herm source repo. Gateway commands, skills, plugins, and MCP prompts are discovered at runtime.
+
+{/* BEGIN AUTO-GENERATED: local-slash-commands */}
+## Client commands
 
 | Command | Aliases | Args | Description |
 |---|---|---|---|
-| `/clear` | — | — | Clear all chat messages from the current view |
-| `/new` | `reset` | — | Start a fresh session |
-| `/theme` | — | — | Open the color theme picker |
-| `/keys` | — | — | Open the keybinding editor |
-| `/help` | — | — | Show keyboard shortcut reference |
-| `/logs` | — | — | Show the gateway stderr log |
-| `/title` | — | `[text]` | Set a title for the current session |
-| `/rollback` | — | — | Browse and restore session checkpoints |
-| `/skin` | — | `[name]` | Switch to a named skin (theme + eikon preset) |
-| `/chafa` | — | `<path>` | Render an image in the terminal via chafa |
-| `/splash` | — | — | Show the Herm launch splash screen |
-| `/stash` | — | `[pop\|list]` | Park the current prompt draft; restore it later |
-| `/voice` | — | `[on\|off\|status\|tts]` | Toggle or query voice recording |
+| `/clear` | — | `—` | Clear chat messages |
+| `/new` | `reset` | `—` | Start a new session |
+| `/theme` | — | `[light\|dark]` | Switch color theme or mode |
+| `/help` | — | `—` | Show keyboard shortcuts |
+| `/keys` | — | `—` | Rebind keyboard shortcuts |
+| `/logs` | — | `—` | Show gateway stderr log |
+| `/title` | — | `[text]` | Set session title |
+| `/rollback` | — | `—` | Browse & restore checkpoints |
+| `/chafa` | — | `<path>` | Render image via chafa (demo) |
+| `/splash` | — | `—` | Show the launch splash |
+| `/skin` | — | `[name]` | Switch Hermes skin (+ theme + eikon) |
+| `/voice` | — | `[on\|off\|status\|tts]` | Toggle voice recording |
+| `/stash` | — | `[pop\|list]` | Park the prompt (pop/list to restore) |
 
 ## Session commands
 
-These commands act on the live Hermes Agent session.
+| Command | Aliases | Args | Description |
+|---|---|---|---|
+| `/steer` | — | `[text]` | Inject a note mid-turn (no interrupt) |
+| `/reload-mcp` | — | `[now\|always]` | Restart MCP servers & rediscover tools |
+| `/reload` | — | `—` | Hot-reload ~/.hermes/.env (API keys) |
+| `/reload-skills` | `reload_skills` | `—` | Re-scan ~/.hermes/skills/ for added/removed skills |
+| `/goal` | — | `[text\|done\|pause\|resume\|clear\|status]` | Set/control the session goal |
+| `/queue` | `q` | `[text]` | Queue a prompt for the next idle turn |
+| `/redo` | — | `—` | Re-send the last undone message |
+| `/branch` | `fork` | `[name]` | Fork current conversation |
+| `/browser` | — | `[connect\|disconnect\|status] [url]` | Connect/disconnect a CDP browser |
+
+## Info commands
 
 | Command | Aliases | Args | Description |
 |---|---|---|---|
-| `/steer` | — | `[text]` | Inject a note into the current turn without interrupting it |
-| `/reload` | — | — | Hot-reload `~/.hermes/.env` to pick up new API keys |
-| `/reload-mcp` | — | `[now\|always]` | Restart MCP servers and rediscover their tools |
-| `/reload-skills` | `reload_skills` | — | Re-scan `~/.hermes/skills/` for added or removed skills |
-| `/queue` | `q` | `[text]` | Queue a prompt to be sent on the next idle turn |
-| `/redo` | — | — | Re-send the last undone message |
-| `/browser` | — | `[connect\|disconnect\|status] [url]` | Connect or disconnect a Chrome DevTools Protocol browser |
-| `/goal` | — | `[text\|done\|pause\|resume\|clear\|status]` | Set or control the current session goal |
+| `/history` | — | `—` | Server-side transcript viewer |
+| `/status` | — | `—` | Version, model, paths |
+| `/usage` | — | `—` | Credits, account status, tokens, context fill, cost |
+| `/profile` | — | `—` | Active profile details |
+
+## Exit commands
+
+| Command | Aliases | Args | Description |
+|---|---|---|---|
+| `/quit` | `exit` | `—` | Exit herm |
+{/* END AUTO-GENERATED: local-slash-commands */}
 
 <Accordion title="Goal subcommands">
 
@@ -100,23 +118,6 @@ The `/browser` command manages a CDP browser connection:
 | `status` | Show whether a browser is connected and its URL |
 
 </Accordion>
-
-## Info commands
-
-These commands open read-only panels; they do not modify session state.
-
-| Command | Aliases | Args | Description |
-|---|---|---|---|
-| `/history` | — | — | Browse the server-side session transcript |
-| `/status` | — | — | Show Herm version, active model, and key file paths |
-| `/usage` | — | — | Display token counts, context fill percentage, and cost |
-| `/profile` | — | — | Show details about the currently active Hermes profile |
-
-## Exit commands
-
-| Command | Aliases | Args | Description |
-|---|---|---|---|
-| `/quit` | `exit` | — | Exit Herm |
 
 ## Gateway and skill commands
 

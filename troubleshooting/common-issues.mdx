@@ -18,13 +18,13 @@ Tmux's default terminal type does not advertise 256-color or true-color support,
   <Step title="Add the correct default-terminal setting">
     ```bash
     set -g default-terminal "tmux-256color"
-    ```
+```
   </Step>
   <Step title="Reload tmux configuration">
     Inside a running tmux session, press your prefix key then `:`, and run:
-    ```
+```bash
     source-file ~/.tmux.conf
-    ```
+```
     Or start a fresh tmux session for the change to take full effect.
   </Step>
   <Step title="Restart Herm">
@@ -42,7 +42,7 @@ Some Herm themes use colors that clash with dark terminal backgrounds, making te
 
 Switch to a light-mode theme designed for readability in dark terminals:
 
-```
+```text
 /theme
 ```
 
@@ -61,7 +61,7 @@ Herm renders inline images in the chat transcript using [chafa](https://hpjansso
     ```bash
     which chafa
     chafa --version
-    ```
+```
     If the command is not found, install chafa using your system package manager. For example:
 
     ```bash
@@ -73,7 +73,7 @@ Herm renders inline images in the chat transcript using [chafa](https://hpjansso
 
     # Fedora
     sudo dnf install chafa
-    ```
+```
   </Step>
   <Step title="Confirm chafa is on your PATH">
     The shell that launches Herm must be able to find `chafa`. If you installed chafa in a non-standard location, add it to `PATH` before running Herm.
@@ -191,9 +191,9 @@ Type `/reload` in the chat composer and press Enter. Herm calls the `reload.env`
   </Step>
   <Step title="Run /reload in Herm">
     In the chat composer, type:
-    ```
+```text
     /reload
-    ```
+```
     and press Enter.
   </Step>
   <Step title="Verify with /status">
@@ -212,7 +212,7 @@ On Windows, the Eikon tab could crash when Herm was unable to locate the correct
     ```bash
     bun add -g herm-tui   # updates to latest stable
     npm i -g herm-tui     # or via npm
-    ```
+```
   </Step>
   <Step title="If the issue persists, set HERMES_PYTHON">
     Specify the full path to your Python interpreter explicitly:
@@ -220,7 +220,7 @@ On Windows, the Eikon tab could crash when Herm was unable to locate the correct
     ```bash
     # In your environment or a .env file
     HERMES_PYTHON=C:\Python311\python.exe
-    ```
+```
 
     You can also add this to a `.env` file in your Hermes home directory.
   </Step>

@@ -43,125 +43,108 @@ If you are migrating from OpenCode, Herm ships a compatible binding preset. Run 
 
 ## Default keybindings
 
-The following tables list every default binding, grouped by scope. **Global** bindings fire regardless of which tab is focused. **List** bindings are active whenever a navigable list is on screen. **Composer** bindings apply inside the text input. **Tab-specific** bindings are only active when that particular tab has focus.
+The following reference is generated from `src/keys/catalog.ts` in the Herm source repo.
 
+{/* BEGIN AUTO-GENERATED: keybindings */}
 ### Global
 
 | Action | Default chord | Description |
 |---|---|---|
-| `leader` | `Ctrl+X` | Leader prefix (two-stroke gate) |
-| `app.exit` | `Ctrl+C` | Quit Herm |
-| `input.clear` | `Ctrl+C` | Clear input (fires when buffer is empty) |
-| `app.suspend` | `Ctrl+Z` | Suspend to shell |
-| `app.redraw` | `Ctrl+L` | Clear and force-repaint terminal |
+| `leader` | `ctrl+x` | Leader prefix |
+| `app.exit` | `ctrl+c` | Quit |
+| `input.clear` | `ctrl+c` | Clear input |
+| `app.suspend` | `ctrl+z` | Suspend to shell |
+| `app.redraw` | `ctrl+l` | Clear & force-repaint terminal |
 | `app.sidebar` | `<leader>b` | Toggle sidebar |
-| `palette.open` | `Ctrl+K` | Open command palette |
-| `help.open` | `F1` | Keyboard shortcuts reference |
-| `tab.next` | `Alt+Right` | Next tab |
-| `tab.prev` | `Alt+Left` | Previous tab |
-| `focus.cycle` | `Tab` | Cycle focus (double-tap → composer) |
-| `editor.open` | `<leader>e` / `Ctrl+G` | Open `$EDITOR` on current prompt |
-| `reply.copy` | `<leader>y` / `Ctrl+Y` | Copy last assistant reply |
-| `clipboard.attach` | `Ctrl+V` | Attach clipboard image |
-| `queue.flush` | `<leader>u` | Interrupt and send queued prompt now |
-| `session.interrupt` | `Escape` | Interrupt streaming (double-tap) |
-| `session.new` | `<leader>n` | Start a new session |
-| `session.redo` | `<leader>r` | Redo last undone message |
+| `palette.open` | `ctrl+k` | Command palette |
+| `help.open` | `f1` | Keyboard shortcuts |
+| `tab.next` | `alt+right` | Next tab |
+| `tab.prev` | `alt+left` | Previous tab |
+| `focus.cycle` | `tab` | Cycle focus (double-tap → composer) |
+| `editor.open` | `<leader>e / ctrl+g` | Open $EDITOR on prompt |
+| `reply.copy` | `<leader>y / ctrl+y` | Copy last assistant reply |
+| `clipboard.attach` | `ctrl+v` | Attach clipboard image |
+| `queue.flush` | `<leader>u` | Interrupt and send queued now |
+| `session.interrupt` | `escape` | Interrupt (double-tap while streaming) |
+| `session.new` | `<leader>n` | New session |
+| `session.redo` | `<leader>r` | Redo last undo |
 | `session.compress` | `<leader>c` | Compress context |
-| `session.steer` | `<leader>s` | Inject a steering note mid-turn |
-| `session.timeline` | `<leader>g` | Open session timeline |
-| `input.stash` | `<leader>p` | Stash the current prompt draft |
-| `theme.pick` | `<leader>t` | Open the theme picker |
-| `model.pick` | `<leader>m` | Switch active model |
-| `status.open` | `<leader>i` | Show status panel |
+| `session.steer` | `<leader>s` | Steer active turn |
+| `input.stash` | `<leader>p` | Stash prompt draft |
+| `session.timeline` | `<leader>g` | Session timeline |
+| `theme.pick` | `<leader>t` | Switch theme |
+| `model.pick` | `<leader>m` | Switch model |
+| `status.open` | `<leader>i` | Show status |
 
 ### List
 
-These bindings are shared across all tabs and dialogs that display a scrollable list.
-
 | Action | Default chord | Description |
 |---|---|---|
-| `list.up` | `Up` | Move selection up |
-| `list.down` | `Down` | Move selection down |
-| `list.pageUp` | `Page Up` | Page up |
-| `list.pageDown` | `Page Down` | Page down |
-| `list.home` | `Home` | Jump to first item |
-| `list.end` | `End` | Jump to last item |
-| `list.activate` | `Return` | Activate / open selected item |
-| `list.delete` | `d` / `Delete` | Delete selected item |
-| `list.refresh` | `r` | Reload the list |
-| `list.new` | `n` | Create a new item |
-| `list.search` | `/` | Filter the list |
-| `list.toggle` | `Space` | Toggle selected item |
+| `list.up` | `up` | Move selection up |
+| `list.down` | `down` | Move selection down |
+| `list.pageUp` | `pageup` | Page up |
+| `list.pageDown` | `pagedown` | Page down |
+| `list.home` | `home` | First item |
+| `list.end` | `end` | Last item |
+| `list.activate` | `return` | Activate / open |
+| `list.delete` | `d / delete` | Delete item |
+| `list.refresh` | `r` | Reload |
+| `list.new` | `n` | Create |
+| `list.search` | `/` | Filter |
+| `list.toggle` | `space` | Toggle item |
 
 ### Dialog
 
-These bindings are active when a modal overlay is open.
-
 | Action | Default chord | Description |
 |---|---|---|
-| `dialog.accept` | `Return` | Accept / confirm |
-| `dialog.cancel` | `Escape` | Cancel or close |
-| `dialog.confirm` | `y` | Answer yes |
-| `dialog.deny` | `n` | Answer no |
-| `dialog.copy` | `c` | Copy dialog body |
+| `dialog.accept` | `return` | Accept |
+| `dialog.cancel` | `escape` | Cancel / close |
+| `dialog.confirm` | `y` | Yes |
+| `dialog.deny` | `n` | No |
+| `dialog.copy` | `c` | Copy body |
 
 ### Composer
 
-These bindings fire inside the text input area.
+| Action | Default chord | Description |
+|---|---|---|
+| `input.submit` | `return` | Send |
+| `input.newline` | `shift+return / ctrl+return / alt+return / ctrl+j` | Insert newline |
+
+### Sessions
 
 | Action | Default chord | Description |
 |---|---|---|
-| `input.submit` | `Return` | Send message |
-| `input.newline` | `Shift+Return` / `Ctrl+Return` / `Alt+Return` / `Ctrl+J` | Insert a newline |
+| `sessions.rename` | `ctrl+r` | Retitle session |
+| `sessions.prev` | `left` | Previous source filter |
+| `sessions.next` | `right` | Next source filter |
 
-### Tab-specific
-
-The following bindings only apply when the named tab is focused.
-
-<Accordion title="Sessions tab">
+### Agents
 
 | Action | Default chord | Description |
 |---|---|---|
-| `sessions.rename` | `Ctrl+R` | Rename the selected session |
-| `sessions.prev` | `Left` | Walk lineage back (continues from) |
-| `sessions.next` | `Right` | Walk lineage forward (compressed to) |
+| `agents.kill` | `k` | Kill subagent |
+| `agents.history` | `h` | Spawn history |
+| `agents.install` | `i` | Install distribution |
 
-</Accordion>
-
-<Accordion title="Agents tab">
+### Config
 
 | Action | Default chord | Description |
 |---|---|---|
-| `agents.kill` | `k` | Kill the selected subagent |
-| `agents.history` | `h` | Open subagent spawn history |
-| `agents.install` | `i` | Install a distribution |
+| `config.save` | `ctrl+s` | Write config |
+| `config.mode` | `m` | Toggle form ↔ YAML |
 
-</Accordion>
-
-<Accordion title="Config tab">
+### Eikon
 
 | Action | Default chord | Description |
 |---|---|---|
-| `config.save` | `Ctrl+S` | Write config to disk |
-| `config.mode` | `m` | Toggle form view ↔ YAML view |
-
-</Accordion>
-
-<Accordion title="Eikon tab">
-
-| Action | Default chord | Description |
-|---|---|---|
-| `eikon.save` | `Ctrl+S` | Save the current eikon |
-| `eikon.marketplace` | `m` | Open the eikon marketplace |
-
-</Accordion>
+| `eikon.save` | `ctrl+s` | Save eikon |
+{/* END AUTO-GENERATED: keybindings */}
 
 ## Where rebindings are saved
 
 All customized chords are stored in:
 
-```
+```text
 ~/.hermes/herm/tui.json
 ```
 

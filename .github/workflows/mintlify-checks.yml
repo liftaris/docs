@@ -1,0 +1,35 @@
+name: Mintlify checks
+
+on:
+  pull_request:
+    paths:
+      - '**/*.mdx'
+      - 'docs.json'
+      - 'snippets/**'
+      - 'scripts/**'
+      - '.github/workflows/mintlify-checks.yml'
+  push:
+    branches: [main]
+    paths:
+      - '**/*.mdx'
+      - 'docs.json'
+      - 'snippets/**'
+      - 'scripts/**'
+      - '.github/workflows/mintlify-checks.yml'
+
+jobs:
+  mintlify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install Mintlify CLI
+        run: npm install -g mint
+      - name: Validate build
+        run: mint validate
+      - name: Check internal links, anchors, redirects, and snippets
+        run: mint broken-links --check-anchors --check-redirects --check-snippets
+      - name: Check accessibility
+        run: mint a11y
