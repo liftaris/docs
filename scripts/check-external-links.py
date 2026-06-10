@@ -96,7 +96,7 @@ def extract_links(source: str, text: str, base: str) -> list[LinkRef]:
     except Exception:
         pass
     for raw in candidates:
-        url = raw.strip().rstrip(".,;:!")
+        url = raw.strip().rstrip(".,;:!`'\"")
         if not url.startswith(("http://", "https://")):
             continue
         parsed = urllib.parse.urlparse(url)
