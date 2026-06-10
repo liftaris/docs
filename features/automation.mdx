@@ -1,117 +1,78 @@
 ---
-title: "Herm Automation — kanban, profiles, and cron jobs"
+title: "Herm Automation: kanban, profiles, and cron jobs"
 sidebarTitle: "Automation"
-description: "Switch Hermes profiles, manage kanban boards for agentic tasks, and schedule recurring cron jobs — all from the Profiles & Automation tab in Herm."
+description: "Use Profiles & Automation to manage kanban tasks, switch Hermes profiles, inspect live delegation, and schedule cron jobs."
 ---
 
-The Profiles & Automation tab (press **Alt+3** or type `/automation` in the chat composer) consolidates the three operational surfaces you use to direct long-running agent work: **Kanban** for task-level agentic workflows, **Profiles** for switching Hermes configurations, and **Cron** for scheduled recurring jobs. Navigate between them with **Shift+Left / Shift+Right**.
+The Profiles & Automation tab groups long-running work surfaces. Open it with **Alt+3** or `/automation`.
+
+Sub-tabs are **Kanban**, **Profiles**, and **Cron**. Move between them with **Shift+Left** and **Shift+Right**.
 
 ## Kanban
 
-The Kanban sub-tab is an agent work surface backed by Hermes Agent's persistent task store. It renders all of your boards at once, with tasks organised into status columns that mirror the Hermes CLI's ordering.
-
-### Board columns
-
-Tasks move through the following statuses from left to right:
+Kanban is an agent work surface backed by Hermes Agent's persistent task store. Herm reads the board without blocking the dispatcher.
 
 | Status | Meaning |
-|--------|---------|
-| `triage` | Newly created, not yet prioritised |
-| `todo` | Ready to be scheduled |
-| `scheduled` | Time-delayed park — dispatcher skips until unblocked |
-| `ready` | Queued for the dispatcher to pick up |
-| `running` | A worker process is active |
-| `blocked` | Waiting on a dependency or human input |
+|---|---|
+| `triage` | Newly created and not prioritized |
+| `todo` | Ready to be specified or scheduled |
+| `scheduled` | Parked until an external unblock or schedule release |
+| `ready` | Ready for the dispatcher |
+| `running` | A worker is active |
+| `blocked` | Waiting for input or dependency |
 | `done` | Completed |
 
-<Note>
-  Herm reads kanban data in a non-blocking mode alongside the Hermes dispatcher so browsing the board never interferes with running tasks.
-</Note>
-
-### Working with tasks
+### Work with tasks
 
 <Steps>
-  <Step title="Browse the board">
-    Use `↑` / `↓` to move between tasks within a column. Each task shows its title, priority, and status at a glance.
+  <Step title="Browse boards">
+    Use arrow keys to move between task rows and columns.
   </Step>
   <Step title="Open task detail">
-    Press `Enter` on a task to open the **task detail view**. This shows the full task body, assignee, run history, diagnostics, linked parent and child tasks, comments, and the tail of the worker log.
+    Press `Enter` to inspect title, body, assignee, run history, diagnostics, parent and child links, comments, and worker-log tail.
   </Step>
-  <Step title="Create a task">
-    Press `n` to create a new task. Fill in the title and body in the dialog that appears.
+  <Step title="Create or update tasks">
+    Use the action hints in the tab to create tasks, assign work, comment, block, schedule, unblock, complete, or archive tasks.
   </Step>
-  <Step title="Delete a task">
-    Press `d` to delete the selected task.
+  <Step title="Dispatch work">
+    Use the dispatch action when tasks are ready for Hermes Agent workers.
   </Step>
 </Steps>
 
-### Diagnostics and dispatch
+Diagnostics come from Hermes Agent's kanban rule engine. Herm displays severity, title, detail, and suggested action per task.
 
-The task detail view surfaces **diagnostics** emitted by Hermes Agent's rule engine (`hermes kanban diagnostics`). Diagnostic entries carry a severity level — `warning`, `error`, or `critical` — a title, a detail message, and suggested actions. Herm displays these per-task so you can spot stuck or failing agent runs at a glance.
+## Profiles and live agents
 
-Structured status transitions (complete, block, unblock, archive, assign, dispatch) are executed via the Hermes CLI (`hermes kanban <verb>`), which ensures all associated lifecycle steps fire correctly.
+The Profiles sub-tab is implemented by Herm's Agents view. It lists Hermes profiles and shows live delegation/subagent state when available.
 
-### Multiple boards
+Switching profiles changes the active Hermes home binding for new work. Herm rehomes local readers and respawns the gateway, so profile switching ends the current live gateway session.
 
-Herm renders all boards simultaneously. The board selected by the `HERMES_KANBAN_BOARD` environment variable (or the default board if the variable is unset) receives focus on mount, but you can navigate to any board from there. Jump directly to the Kanban sub-tab with `/kanban`.
-
-## Profiles
-
-The Profiles sub-tab lists every Hermes profile on disk — the default profile plus any named profiles under `~/.hermes/profiles/`. Switching profiles changes the model, system prompt, and tool configuration that Hermes Agent uses for new sessions.
-
-<CardGroup cols={2}>
-  <Card title="Switch profile" icon="arrow-right-arrow-left">
-    Highlight a profile and press `Enter` to switch the active gateway to that profile.
-  </Card>
-  <Card title="Create profile" icon="plus">
-    Press `n` to create a new profile. Herm validates the name inline before handing off to `hermes profile create`.
-  </Card>
-  <Card title="Delete profile" icon="trash">
-    Press `d` to delete the selected profile.
-  </Card>
-  <Card title="Reload list" icon="rotate">
-    Press `r` to rescan the profiles directory.
-  </Card>
-</CardGroup>
-
-Each profile entry shows:
-- The profile name and whether it is currently active or sticky
-- The configured model and provider
-- Skill count
-- A preview of the profile's `SOUL.md` system prompt
-- Whether the gateway is currently running under that profile
-
-<Tip>
-  You can also switch profiles with `/profiles` to jump directly to this sub-tab, or use the quick-switch shortcut `<leader>m` to pick a model from wherever you are.
-</Tip>
-
-### Profile names
-
-Profile names must match the pattern `[a-z0-9][a-z0-9_-]{0,63}`. Names like `hermes`, `default`, `test`, `tmp`, `root`, and `sudo` are reserved. All write operations (create, delete, rename, export, use) route through the Hermes CLI so validation, skill seeding, and wrapper alias management are handled authoritatively.
+<Warning>
+  Profile switching changes which config, skills, env vars, memory, sessions, and cron jobs Herm reads. Confirm before switching during active work.
+</Warning>
 
 ## Cron
 
-The Cron sub-tab lets you schedule recurring agent jobs — prompts that Hermes Agent runs automatically on a schedule you define.
+The Cron sub-tab lets you manage scheduled Hermes Agent jobs. Jobs run under the profile that owns them.
 
-<Steps>
-  <Step title="Create a cron job">
-    Press `n` to open the job creation dialog. Specify the prompt text and the cron schedule expression.
-  </Step>
-  <Step title="Enable or disable a job">
-    Highlight a job and press `Space` to toggle it on or off without deleting it.
-  </Step>
-  <Step title="Delete a job">
-    Press `d` to permanently remove the selected cron job.
-  </Step>
-</Steps>
+| Action | What it does |
+|---|---|
+| Create | Define a prompt or script with a schedule |
+| Pause or resume | Toggle whether a job runs |
+| Run now | Trigger a job manually |
+| Delete | Remove the schedule |
 
-Cron jobs are stored in `~/.hermes/cron/jobs.json` (or the equivalent path under the active profile's home). The Profiles sub-tab shows a `crons` count for each profile so you can see at a glance which profiles have scheduled work.
+Cron data is managed through the Hermes gateway. Herm is the UI for viewing and editing it.
 
-<Warning>
-  Cron jobs run under the profile that owns them. If you switch profiles, jobs defined under a different profile continue to run on their own schedule — they are not paused when another profile is active.
-</Warning>
+## Quick navigation
 
-Jump directly to the Cron sub-tab at any time with `/cron`.
+| Command | Destination |
+|---|---|
+| `/kanban` | Kanban sub-tab |
+| `/automation` | Profiles & Automation tab |
+| `/profiles` | Profiles sub-tab |
+| `/agents` | Profiles and live agents view |
+| `/cron` | Cron sub-tab |
 
 ## Related docs
 

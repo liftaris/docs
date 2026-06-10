@@ -1,100 +1,107 @@
 ---
-title: "Frequently asked questions about the Herm terminal UI"
+title: "Frequently asked questions about Herm"
 sidebarTitle: "FAQ"
-description: "Answers to common questions about Herm: compatibility with Hermes Agent, session storage, themes, gateway setup, and what Herm does and doesn't do."
+description: "Answers about Herm, Hermes Agent compatibility, installation, settings, eikons, skins, plugins, and where each system owns behavior."
 ---
 
-Whether you're just getting started or have been running Herm in your daily workflow for a while, you're likely to run into questions about how it fits alongside Hermes Agent, where your data lives, and how to customize the experience. The answers below cover the most commonly asked questions — from runtime compatibility to eikons and plugins.
+This FAQ explains how Herm fits with Hermes Agent and Eikon. It favors current source truth over old release notes.
+
+## Runtime and install
 
 <AccordionGroup>
+  <Accordion title="Does Herm replace Hermes Agent?">
+    No. Herm is a terminal UI for Hermes Agent. Hermes Agent owns models, providers, tools, sessions, profiles, cron, skills, memory, MCP, and gateway runtime behavior.
 
-<Accordion title="Does Herm replace Hermes Agent?">
-No. Herm is a keyboard-driven terminal UI (TUI) that operates Hermes Agent — it does not replace it, implement model providers itself, or own any Hermes runtime behavior. Think of Herm as an operator dashboard: it gives you a single terminal interface for chatting with Hermes, managing sessions, inspecting context, running kanban work, and configuring your Hermes home, all without leaving the shell.
+    Herm starts and talks to the Hermes gateway so you can operate those surfaces from one terminal interface.
+  </Accordion>
 
-Hermes Agent must be installed and running for Herm to function. Herm spawns the Hermes gateway as a subprocess and communicates with it over a stdio JSON-RPC connection.
-</Accordion>
+  <Accordion title="What Hermes Agent version does Herm support?">
+    Herm tracks current Hermes Agent behavior. It does not promise compatibility with old Hermes Agent versions because gateway and session interfaces change quickly.
 
-<Accordion title="What version of Hermes Agent does Herm support?">
-Herm does not guarantee backward compatibility with older versions of Hermes Agent. Because Hermes is actively developed and its interfaces change frequently, things can break when Hermes updates. The Herm team runs regular Hermes parity sweeps to keep Herm current, but there is no promise that a given Herm release will work with a Hermes version older than the one it was built against.
+    If an update breaks Herm, use `/status` and `/logs` to inspect Herm and gateway versions, then update Herm to the latest release.
+  </Accordion>
 
-If you experience unexpected behavior after a Hermes update, check `/status` inside Herm to see the version information for both Herm and the gateway, then consult the changelog to find the matching Herm release.
-</Accordion>
+  <Accordion title="Can I use Herm without Bun?">
+    Yes. Bun is the development runtime and the recommended package runner. The npm global install is also supported.
 
-<Accordion title="Can I use Herm without Bun?">
-Yes. Herm is built with [Bun](https://bun.sh/) and Bun ≥ 1.3.0 is the recommended runtime, but a Node package runner works too. The npm global install is fully supported:
+    ```bash
+    npm i -g herm-tui
+    ```
 
-```bash
-npm i -g herm-tui
-```
+    To try Herm without a global install, run:
 
-If you have Bun available and want to try Herm without a permanent global install, `bunx` runs it directly from the registry without adding it to your global bin:
+    ```bash
+    bunx herm-tui
+    ```
+  </Accordion>
 
-```bash
-bunx herm-tui
-```
+  <Accordion title="Can I use Herm on Windows?">
+    Windows is supported through the npm launcher. If the gateway cannot find Python or the Eikon tab reports Python-related errors, set `HERMES_PYTHON` to the full interpreter path.
 
-You can also run from source by cloning the repo and using your package runner of choice.
-</Accordion>
+    ```powershell
+    $env:HERMES_PYTHON = "C:\Python311\python.exe"
+    ```
+  </Accordion>
+</AccordionGroup>
 
-<Accordion title="Where does Herm store my settings and sessions?">
-Herm reads from and writes to your Hermes home directory, which defaults to `~/.hermes`. This is where Hermes Agent stores profiles, sessions, skills, and other operational data.
+## Configuration and data
 
-Herm's own preferences and input history are stored separately in `$HERMES_HOME/herm` by default. You can relocate this directory by setting `HERM_CONFIG_DIR` in your environment.
+<AccordionGroup>
+  <Accordion title="Where does Herm store settings and sessions?">
+    Herm reads Hermes Agent data from `HERMES_HOME`, which defaults to `~/.hermes`. Hermes Agent stores sessions, profiles, skills, memory, cron jobs, and related runtime data there.
 
-If your Hermes home lives somewhere other than `~/.hermes`, set the `HERMES_HOME` environment variable to point Herm (and Hermes) at the right location. See `.env.example` for all available overrides — all of them are optional.
-</Accordion>
+    Herm stores its own UI preferences in `$HERMES_HOME/herm/tui.json` by default. Set `HERM_CONFIG_DIR` to move those preferences elsewhere.
+  </Accordion>
 
-<Accordion title="How do I change the model Herm uses?">
-Use the `/model` slash command from the chat composer to open the model picker. Model changes are session-scoped by default, meaning the selected model applies to the current session only. To change the model globally (across all sessions), use the `--global` flag when prompted.
+  <Accordion title="How do I change the model Herm uses?">
+    Use `/model` in the chat composer to open the model picker. You can also use the Config tab, which exposes the main model slot and auxiliary model slots.
 
-You can also navigate to the **Config** tab and look under the Models category, which exposes the main model slot plus auxiliary task slots — the same controls available through the web UI's model settings panel.
-</Accordion>
+    Model behavior is still owned by Hermes Agent. Herm only provides the UI for editing the relevant settings.
+  </Accordion>
 
-<Accordion title="Can I use Herm on Windows?">
-Yes, Windows support was added in v1.6.0. The npm launcher shim resolves correctly on Windows via a `.ps1` script, so a standard `npm i -g herm-tui` install should work.
+  <Accordion title="How do I reload changed API keys?">
+    Edit the active profile `.env` file, then run `/reload` in Herm. The gateway re-reads environment values without a full restart.
+  </Accordion>
+</AccordionGroup>
 
-<Note>
-If the Eikon tab crashes or you see Python-related errors on Windows, set the `HERMES_PYTHON` environment variable to the full path of your Python interpreter. This is needed when Herm cannot automatically discover the correct Python venv — a fix for the most common Windows crash scenario was shipped in v1.8.1.
-</Note>
-</Accordion>
+## Eikons
 
-<Accordion title="What is an eikon?">
-An eikon is an animated avatar displayed in the Herm sidebar during chat. The word comes from the ancient Greek _eikōn_ (εἰκών), meaning image or likeness — and in Herm's context, it is a sculptural identity for your Hermes session.
+<AccordionGroup>
+  <Accordion title="What is an eikon?">
+    An eikon is an animated terminal avatar shown in the Herm chat sidebar. `.eikon` artifacts decode to typed NDJSON runtime records and may be stored as plain UTF-8 or gzip-compressed bytes.
 
-Eikons are encoded as `.eikon` NDJSON files that describe braille or character-art frames, states (idle, listening, thinking, error), and playback timing. Herm ships with a built-in default eikon and supports installing additional eikons from the Marketplace or from local files.
-</Accordion>
+    Standard states are `idle`, `listening`, `thinking`, `speaking`, `working`, and `error`.
+  </Accordion>
 
-<Accordion title="How do I install a new eikon?">
-There are two ways to install an eikon:
+  <Accordion title="How do I install a new eikon?">
+    Open `/marketplace`, select an entry, and press `Enter` to open its actions dialog. Choose an install action, then use the dialog or Gallery to activate the entry when ready.
 
-**From the Marketplace (recommended):**
-1. Navigate to the **Eikon** tab (press `Alt+5` or use `/gallery`).
-2. Press `M` from the Gallery sub-tab to open the native Eikon Marketplace.
-3. Search the catalog, preview your selection, and press the install key to install without activating.
-4. Return to Gallery to activate the newly installed eikon when you're ready.
+    For local source media or package sources, open `/gallery`, press `n`, and use the New / Install dialog.
+  </Accordion>
 
-**From a local file:**
-Use the `/eikon` slash command or the command palette (`Ctrl+K`) to open the eikon picker and select a local `.eikon` file.
+  <Accordion title="What does eikon.liftaris.dev do?">
+    [eikon.liftaris.dev](https://eikon.liftaris.dev) is a discovery gallery. It previews catalog entries and shows install instructions. Native install, use, update, source download, and deletion flows happen in Herm or the Eikon CLI.
+  </Accordion>
+</AccordionGroup>
 
-<Tip>
-Herm's native Marketplace handles all install and activation logic. The `eikon.liftaris.dev` site is a discovery mirror only — use it to browse and preview catalog entries, then install from within Herm itself.
-</Tip>
-</Accordion>
+## Themes, skins, and plugins
 
-<Accordion title="What are skins?">
-A skin is a combined preset that sets a Hermes profile, a Herm color theme, and a bundled eikon in a single command. Use `/skin` from the chat composer to browse and apply available skins. Switching a skin is non-destructive — you can change it again at any time.
-</Accordion>
+<AccordionGroup>
+  <Accordion title="What are skins?">
+    A skin is a Hermes Agent skin setting that Herm can mirror with a matching Herm theme and bundled eikon when available. Use `/skin [name]` to apply one.
 
-<Accordion title="How do I write a plugin?">
-Herm exposes a plugin API built on the `@opentui/react` SlotRegistry. Plugins can render into named slots such as the bottom gutter and sidebar avatar, and can be wired into the Eikon Studio for live preview.
+    Switching skins does not delete local themes, eikons, or sessions.
+  </Accordion>
 
-The plugin system shipped in v1.6.0. Demo plugin files (`files` and `clock`) are included in the source tree but are disabled by default. To get started, examine those files in `src/` for the slot API shape and the `SKILL.md` + `preview.sh` scaffold pattern used by Eikon Studio plugins.
+  <Accordion title="How do I write a plugin?">
+    Herm plugins are bundled TypeScript modules. A plugin exports a `HermPlugin` with an `id`, optional `enabled` flag, and `tui(api)` factory.
 
-<Note>
-Plugin documentation is evolving alongside the API. If you are writing a plugin against the current release, check the CHANGELOG for any breaking changes to the slot API between versions.
-</Note>
-</Accordion>
+    Current plugins can register `app_bottom` UI, routes, command-palette actions, gateway event listeners, KV state, lifecycle cleanup, and Eikon rasterizers. User-installed plugin directories are not loaded yet.
+  </Accordion>
 
+  <Accordion title="Which plugin examples should I read first?">
+    Start with the bundled `demo.clock` and `demo.files` source files, then read [Plugin examples](/plugins/examples). Those examples match the current bundled-only plugin model.
+  </Accordion>
 </AccordionGroup>
 
 ## Related docs

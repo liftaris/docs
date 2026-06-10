@@ -1,115 +1,50 @@
 ---
 title: "Find and install community eikons from Herm Marketplace"
 sidebarTitle: "Marketplace"
-description: "Search the community Eikon Marketplace, preview entries, and install shared avatars without auto-activating — all from inside Herm."
+description: "Browse the public Eikon catalog in Herm, inspect package status, install entries, download source when available, and activate installed avatars."
 ---
 
-The Eikon Marketplace is a built-in browser for community-shared avatars. It connects to the public catalog and presents every available eikon in a two-column grid with live previews, metadata, and a single-key install action. Installing from the Marketplace does not automatically activate the new eikon — you choose when to switch.
+The Eikon Marketplace is Herm's native browser for the public eikon catalog. It is an install and inspection UI inside the terminal.
 
-## Opening the Marketplace
+Open it with **Alt+5** and the **Marketplace** sub-tab, or type `/marketplace`.
 
-You can reach the Marketplace in three ways:
+## Browse the catalog
 
-- Press **Alt+5** to open the Eikon tab, then select **Marketplace** from the sub-tab strip.
-- Type `/marketplace` in the chat input.
-- Press **M** while the Gallery tab is focused.
+Marketplace loads the catalog and renders entries as cards. Cards show the poster preview, name, author, and current install status.
 
-## Browsing the catalog
+Select a card to preview it in the sidebar. Press `Space` to toggle the preview state between `idle` and `thinking` when a preview is available.
 
-The Marketplace loads the public catalog as soon as it opens and displays results in a two-column card grid. Each card shows:
-
-- The eikon **name**, prefixed with `●` if it is currently your active avatar.
-- A **poster** — a small ASCII art preview baked into the catalog entry.
-- The **author** name.
-- A short **description**.
-- A **digest** — a truncated content hash for the package.
-- The current **install status**: `not installed`, `installed`, or `active`.
-- An **action label**: `Install`, `Use`, or `Active`.
-
-Navigate the grid with **↑↓←→** or **Page Up/Down/Home/End**. The selected card is highlighted and, when a sidebar is available, a full animated preview appears there automatically.
-
-<Tip>
-  Press **Space** to toggle the preview between the `idle` and `thinking` avatar states for the selected entry.
-</Tip>
-
-## Searching
-
-Press your configured `list.search` key (shown in the hint bar) to enter search mode. A `Search: <query>` indicator appears in the tab title. While searching:
-
-- Type any character to add it to the query.
-- Press **Backspace** to remove the last character.
-- Press **Esc** to exit search mode and keep the current query.
-
-The catalog filters in real time as you type.
-
-## Previewing an entry
-
-When you select a catalog entry, Herm fetches its preview data from the catalog service and renders the first frame of the `idle` state in the Details panel (or the chat sidebar if a sidebar preview hook is active). The Details panel shows:
-
-- A rendered preview frame.
-- Name, author, and description.
-- A content digest.
-- Install status.
-- The current preview state, with a **[Space]** hint to switch states.
-- The primary action button.
-
-## Installing an eikon
-
-<Steps>
-  <Step title="Select an entry">
-    Use **↑↓←→** to highlight the eikon you want. The action label on the card will read **Install** for entries you have not yet downloaded.
-  </Step>
-  <Step title="Press Enter">
-    Press **Enter** (or your configured `list.activate` key) to start the installation. A toast notification appears while the download is in progress.
-  </Step>
-  <Step title="Confirm success">
-    When the install completes, a success toast shows the eikon name and the number of files written:
-```text
-    Installed '<name>' (<n> files)
-```
-    The catalog grid refreshes automatically and the card's status updates to `installed`.
-  </Step>
-</Steps>
-
-<Note>
-  Installing an eikon does not activate it. After installation, navigate to the Gallery (press **Alt+5 → Gallery**) to select it and press **Enter** to make it your active avatar.
-</Note>
-
-If an install fails, Herm shows an error toast with the reason. Press your configured `list.refresh` key to reload the catalog and try again.
-
-## Using an already-installed eikon
-
-If a catalog entry is already installed, its action label reads **Use**. Pressing **Enter** activates that eikon immediately as your sidebar avatar — no re-download required. If the entry is already your active avatar, the label reads **Active** and the action is a no-op.
-
-## Reloading the catalog
-
-Press your configured `list.refresh` key to re-fetch the catalog from the server. This is useful if you have just published an eikon and want to see it in the list, or if the network was unavailable when the Marketplace first loaded.
-
-## Submitting your own eikon
-
-You submit eikons to the Marketplace from the Gallery or Studio, not from inside the Marketplace itself. See the [Gallery](/eikon/gallery) and [Studio](/eikon/studio) pages for the submission workflow.
-
-<Warning>
-  Eikons that were installed from the Marketplace are blocked from duplicate re-submission. Create a local draft of the eikon before submitting a modified version.
-</Warning>
-
-## The browser mirror
-
-[eikon.liftaris.dev](https://eikon.liftaris.dev) is a read-only browser mirror of the same public catalog. You can use it to discover and preview eikons from a web browser, but all install, activate, and management actions must be done inside Herm.
-
-## Keyboard reference
+## Search and refresh
 
 | Key | Action |
 |---|---|
-| **↑ / ↓ / ← / →** | Navigate the grid |
-| **Page Up / Page Down / Home / End** | Navigate by page or jump to ends |
-| **Enter** (`list.activate`) | Install, Use, or confirm active entry |
-| **Space** (`list.toggle`) | Toggle preview state (idle ↔ thinking) |
-| `list.search` | Enter search mode |
-| `list.refresh` | Reload catalog |
-| **Backspace** *(in search)* | Remove last search character |
-| **Esc** *(in search)* | Exit search mode |
-| **Esc** *(browsing)* | Clear sidebar preview |
+| `/` | Filter catalog entries |
+| `r` | Reload the catalog |
+| `Space` | Toggle preview state |
+| `Enter` | Open the actions dialog |
+| `d` | Delete a local installed entry when allowed |
+
+## Install or use an entry
+
+Press `Enter` on a card to open the actions dialog. Available actions depend on the package and local state.
+
+Common actions include:
+
+- **Use:** activate an entry that is already installed.
+- **Eikon only:** install the runtime artifact without source media.
+- **Eikon + Source:** install the runtime artifact and fetch source media when the package exposes it.
+- **Download Source:** fetch source media for an already-installed entry when available.
+- **Delete:** remove the local installed entry when it is safe to do so.
+
+Installing an eikon does not automatically activate it. Use the action dialog or Gallery to choose when it becomes active.
+
+## Catalog trust and compatibility
+
+Marketplace shows package status from catalog metadata and local install state. Treat status and digest fields as integrity hints. They help you inspect what package is installed and whether source media is available.
+
+## Browser gallery boundary
+
+[eikon.liftaris.dev](https://eikon.liftaris.dev) is a discovery gallery. It previews catalog entries and gives install instructions. Herm owns the native Marketplace install, source-download, activation, and deletion flows.
 
 ## Related docs
 

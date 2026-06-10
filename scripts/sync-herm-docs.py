@@ -64,10 +64,10 @@ def slash_commands() -> str:
             m=re.search(rf'{name}:\s*"([^"]*)"', obj)
             return m.group(1) if m else default
         name=field('name'); desc=field('description'); cat=field('category')
-        args=field('argsHint') or '—'
+        args=field('argsHint') or 'None'
         m=re.search(r'aliases:\s*\[([^\]]*)\]', obj, flags=re.S)
         aliases=m.group(1) if m else ''
-        al=', '.join(f'`{x}`' for x in re.findall(r'"([^"]+)"', aliases)) or '—'
+        al=', '.join(f'`{x}`' for x in re.findall(r'"([^"]+)"', aliases)) or 'None'
         if not name or not cat: continue
         rows.append((cat,name,al,args.replace('|','\\|'),desc))
     order=['Client','Session','Info','Exit']
@@ -95,7 +95,7 @@ def themes() -> str:
 def env_vars() -> str:
     files=[
         'src/context/gateway-client.ts','src/utils/paths.ts','src/service/hermes-kanban.ts',
-        'src/service/eikon.ts','src/tabs/EikonMarketplace.tsx','src/io/index.ts',
+        'src/service/eikon.ts','src/service/hermes-home.ts','src/tabs/EikonMarketplace.tsx','src/io/index.ts',
         'src/app/control.ts','src/app/slash.tsx','src/utils/perf.ts','src/utils/editor.ts'
     ]
     names=set()
@@ -111,8 +111,8 @@ def env_vars() -> str:
         'HERMES_PYTHON':'Python interpreter used for the gateway subprocess.',
         'HERM_CONFIG_DIR':'Herm TUI preferences directory. Defaults to `$HERMES_HOME/herm`.',
         'HERMES_CWD':'Working directory passed to the gateway session.',
-        'HERM_EIKON_MARKETPLACE':'Override the public Eikon catalog index URL.',
-        'EIKON_URL':'Legacy marketplace catalog override used by the Marketplace tab.',
+        'HERM_EIKON_MARKETPLACE':'Override the lower-level Eikon catalog loader default. The native Marketplace tab uses `EIKON_URL`.',
+        'EIKON_URL':'Override the native Eikon Marketplace catalog URL.',
         'HERMES_KANBAN_HOME':'Pin the kanban data home.',
         'HERMES_KANBAN_BOARD':'Default kanban board filter/selection.',
         'HERMES_KANBAN_BUSY_TIMEOUT_MS':'Kanban busy timeout in milliseconds.',

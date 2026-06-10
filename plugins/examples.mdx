@@ -1,29 +1,26 @@
 ---
 title: "Herm plugin examples: slots, tabs, events, and rasterizers"
 sidebarTitle: "Examples"
-description: "Copy-pasteable Herm plugin examples: status bar slots, custom tabs, gateway event listeners, persistent KV settings, and Eikon rasterizers."
+description: "Examples for bundled Herm plugins, including bottom-gutter UI, custom tabs, command-palette entries, gateway events, KV state, and Eikon rasterizers."
 ---
 
-The examples below are complete, copy-pasteable TypeScript modules. Each one focuses on a single pattern you can drop into `src/plugins/bundled/` and wire into `INTERNAL`. Read the [Overview](/plugins/overview) for the two-step wiring process and the [API Reference](/plugins/api-reference) for full type signatures.
+These examples are for bundled plugins under `src/plugins/bundled/`. Herm does not load external plugin packages yet.
 
----
-
-## Example 1 — Minimal hello-world plugin
-
-The simplest possible plugin: register a static string in the `app_bottom` slot so it appears in the one-row gutter below the message composer.
+## Example 1: Bottom-gutter status
 
 ```tsx
 import type { HermPlugin } from "../types"
 
 const plugin: HermPlugin = {
-  id: "acme.hello",
+  id: "acme.status",
+  enabled: false,
   tui(api) {
     api.slots.register({
       order: 50,
       slots: {
-        app_bottom: () => (
+        app_bottom: (_ctx, props) => (
           <text fg={api.theme.current.textMuted} wrapMode="none">
-            hello from acme
+            {props.streaming ? "agent running" : "agent idle"}
           </text>
         ),
       },
@@ -34,125 +31,49 @@ const plugin: HermPlugin = {
 export default plugin
 ```
 
-<Note>
-  `app_bottom` uses the `single_winner` composition mode — only the contribution with the lowest `order` value renders. If another plugin already owns `order: 0`, raise your `order` number or you will be silently dropped.
-</Note>
+`app_bottom` uses `single_winner` composition. Use an `order` value that does not conflict with another enabled plugin that should win the same row.
 
----
-
-## Example 2 — Status bar showing streaming state
-
-The `app_bottom` slot receives a `streaming` boolean prop that is `true` while the agent is generating a response. Use it to show a live indicator.
+## Example 2: Custom route and command
 
 ```tsx
 import type { HermPlugin } from "../types"
 
 const plugin: HermPlugin = {
-  id: "acme.status-bar",
+  id: "acme.notes",
+  enabled: false,
   tui(api) {
-    api.slots.register({
-      order: 10,
-      slots: {
-        // The second argument carries the slot's typed props.
-        app_bottom: (_ctx, p) => {
-          const theme = api.theme.current
-          return (
-            <text
-              fg={p.streaming ? theme.accent : theme.textMuted}
-              wrapMode="none"
-            >
-              {p.streaming ? "● streaming" : "○ idle"}
-            </text>
-          )
-        },
-      },
-    })
+    api.route.register([{
+      name: "Notes",
+      description: "Scratch notes",
+      render: () => <text fg={api.theme.current.text}>notes</text>,
+    }])
+
+    api.command.register([{
+      title: "Open Notes",
+      value: "acme.notes.open",
+      category: "Plugin",
+      onSelect: () => api.route.navigate("Notes"),
+    }])
   },
 }
 
 export default plugin
 ```
 
----
+Routes appear after Herm's built-in tabs. Commands appear in the `Ctrl+K` palette.
 
-## Example 3 — Custom tab with a command palette entry
-
-Register a new top-level tab and wire it to the Ctrl+K palette so users can jump to it by name without reaching for the mouse.
-
-```tsx
-import { useState } from "react"
-import type { HermPlugin, HermPluginApi } from "../types"
-
-function ScratchPad({ api }: { api: HermPluginApi }) {
-  const theme = api.theme.current
-  const [text, setText] = useState("")
-
-  return (
-    <box flexGrow={1} flexDirection="column" paddingX={2} paddingY={1}>
-      <box height={1} flexShrink={0}>
-        <text fg={theme.textMuted} wrapMode="none">
-          Scratch pad — type freely, nothing is sent to the agent.
-        </text>
-      </box>
-      <scrollbox scrollY flexGrow={1}>
-        <text fg={theme.text} wrapMode="word">{text || " "}</text>
-      </scrollbox>
-    </box>
-  )
-}
-
-const plugin: HermPlugin = {
-  id: "acme.scratch",
-  tui(api) {
-    // Register the tab.
-    api.route.register([
-      {
-        name: "Scratch",
-        description: "Personal scratch pad",
-        render: () => <ScratchPad api={api} />,
-      },
-    ])
-
-    // Register the palette command.
-    api.command.register([
-      {
-        title: "Scratch: open scratch pad",
-        value: "acme.scratch.open",
-        category: "Plugin",
-        onSelect: () => api.route.navigate("Scratch"),
-      },
-    ])
-  },
-}
-
-export default plugin
-```
-
-<Tip>
-  You can navigate to any built-in tab the same way — `api.route.navigate("memory")` uses the slash name. Check `api.route.current` to read back the active tab name.
-</Tip>
-
----
-
-## Example 4 — Gateway event listener with toast notification
-
-Subscribe to the gateway event stream and show a toast every time the agent finishes a turn.
+## Example 3: Gateway event listener
 
 ```tsx
 import type { HermPlugin } from "../types"
 
 const plugin: HermPlugin = {
-  id: "acme.turn-notifier",
+  id: "acme.events",
+  enabled: false,
   tui(api) {
-    // api.event.on() returns a disposer. The scope tracks it
-    // automatically — no need to store or call it yourself.
-    api.event.on(ev => {
-      if (ev.type === "message.complete") {
-        api.ui.toast({
-          variant: "success",
-          title: "Turn complete",
-          message: "The agent finished its response.",
-        })
+    api.event.on((event) => {
+      if (event.type === "session.ready") {
+        api.ui.toast({ variant: "success", message: "session ready" })
       }
     })
   },
@@ -161,206 +82,65 @@ const plugin: HermPlugin = {
 export default plugin
 ```
 
-<Note>
-  The full `GatewayEvent` union is defined in `src/context/wire.ts`. Check `ev.type` to narrow to the events you care about.
-</Note>
+Herm scope-tracks the disposer returned by `event.on()`. You do not need to remove the listener manually on plugin deactivation.
 
----
-
-## Example 5 — Persistent settings with api.kv
-
-Use `api.kv` to remember user preferences across sessions. The store is automatically namespaced by your plugin's `id` — you never need to prefix keys yourself.
+## Example 4: Persistent plugin setting
 
 ```tsx
-import { useEffect, useState } from "react"
-import type { HermPlugin, HermPluginApi } from "../types"
-
-// Key names are local to your plugin — no risk of collision.
-const KEY_SHOW_CLOCK = "show_clock"
-
-// A component with its own timer so the display updates every second.
-// A bare new Date() call in a slot renderer evaluates once at render
-// time and never ticks — always use useState + useEffect for live data.
-function LiveClock({ api }: { api: HermPluginApi }) {
-  const [now, setNow] = useState(() => new Date())
-  useEffect(() => {
-    const t = setInterval(() => setNow(new Date()), 1000)
-    return () => clearInterval(t)
-  }, [])
-  return (
-    <text fg={api.theme.current.textMuted} wrapMode="none">
-      {now.toLocaleTimeString()}
-    </text>
-  )
-}
-
-function SettingsPanel({ api }: { api: HermPluginApi }) {
-  const theme = api.theme.current
-
-  // Read the current value (false = default for first launch).
-  const [showClock, setShowClock] = useState(() =>
-    api.kv.get<boolean>(KEY_SHOW_CLOCK, false),
-  )
-
-  const toggle = () => {
-    const next = !showClock
-    setShowClock(next)
-    api.kv.set(KEY_SHOW_CLOCK, next)
-    api.ui.toast({ message: `Clock ${next ? "enabled" : "disabled"}.` })
-  }
-
-  return (
-    <box flexDirection="column" paddingX={2} paddingY={1} gap={1}>
-      <box height={1}>
-        <text fg={theme.text} wrapMode="none">
-          Show clock in status bar:{" "}
-          <span fg={showClock ? theme.accent : theme.textMuted}>
-            {showClock ? "on" : "off"}
-          </span>
-        </text>
-      </box>
-      <box height={1} onClick={toggle}>
-        <text fg={theme.accent} wrapMode="none">[ toggle ]</text>
-      </box>
-    </box>
-  )
-}
+import type { HermPlugin } from "../types"
 
 const plugin: HermPlugin = {
-  id: "acme.settings-demo",
+  id: "acme.counter",
+  enabled: false,
   tui(api) {
-    api.route.register([
-      {
-        name: "AcmeSettings",
-        description: "Acme plugin settings",
-        render: () => <SettingsPanel api={api} />,
+    api.command.register([{
+      title: "Increment Counter",
+      value: "acme.counter.increment",
+      category: "Plugin",
+      onSelect: () => {
+        const next = api.kv.get("count", 0) + 1
+        api.kv.set("count", next)
+        api.ui.toast({ message: `count: ${next}` })
       },
-    ])
-
-    api.command.register([
-      {
-        title: "Acme: open settings",
-        value: "acme.settings.open",
-        category: "Plugin",
-        onSelect: () => api.route.navigate("AcmeSettings"),
-      },
-    ])
-
-    // Conditionally show the clock based on the saved preference.
-    if (api.kv.get<boolean>(KEY_SHOW_CLOCK, false)) {
-      api.slots.register({
-        order: 20,
-        slots: {
-          app_bottom: () => <LiveClock api={api} />,
-        },
-      })
-    }
+    }])
   },
 }
 
 export default plugin
 ```
 
-<Note>
-  KV data is written to `~/.hermes/herm/tui.json` (or `$HERM_CONFIG_DIR/tui.json`). Values survive plugin deactivation and Herm restarts. The fallback argument you pass to `api.kv.get()` is the TypeScript type anchor — match it to the type you store.
-</Note>
+KV keys are scoped by plugin id at runtime.
 
----
+## Example 5: Eikon rasterizer
 
-## Example 6 — Custom Eikon rasterizer skeleton
-
-Contribute a new image-to-text backend to the Eikon Studio tab. The Studio pre-processes all spatial work and hands your `render()` a pre-cropped grayscale `Window`. You only define the glyph mapping.
+Bundled plugins can register Studio rasterizers. In current bundled code, rasterizer examples may import internal utility types because there is no external plugin package boundary yet.
 
 ```tsx
 import type { HermPlugin } from "../types"
 import type { Rasterizer } from "../../utils/eikon-render"
 
-// Define the rasterizer outside tui() so it is a stable reference.
-const asciiRasterizer: Rasterizer = {
-  name: "acme-ascii",
-
-  // Knob schema — the Studio renders these controls generically.
-  knobs: {
-    density: {
-      kind: "cycle",
-      options: ["dense", "medium", "sparse"],
-      default: "medium",
-    },
-    invert: {
-      kind: "toggle",
-      default: false,
-    },
-    gamma: {
-      kind: "slider",
-      min: 0.5,
-      max: 2.0,
-      step: 0.1,
-      default: 1.0,
-    },
+const rasterizer: Rasterizer = {
+  name: "blocks",
+  knobs: [],
+  async available() {
+    return true
   },
-
-  // Return true when your backend is usable, or a short reason string
-  // when it is not (appears as a hint next to the dimmed entry).
-  available: () => {
-    const found = Bun.which("my-ascii")
-    return found ? true : "my-ascii not found on PATH"
-  },
-
-  async render(win, knobs, signal) {
-    // win.gray  — row-major Uint8Array of win.w × win.h grayscale bytes.
-    // win.png() — lazy 8-bit grayscale PNG encode (~1 ms at 384×384).
-    // Use Bun.spawn (async) rather than spawnSync — blocking the main
-    // thread freezes the Studio's slider drag.
-    const proc = Bun.spawn(
-      [
-        "my-ascii",
-        "-",
-        "--density", String(knobs.density),
-        "--gamma",   String(knobs.gamma),
-        ...(knobs.invert ? ["--invert"] : []),
-      ],
-      { stdin: win.png(), stdout: "pipe", stderr: "pipe" },
-    )
-
-    // Honour the abort signal: kill the subprocess if a newer render
-    // supersedes this one before it finishes.
-    signal?.addEventListener("abort", () => proc.kill(), { once: true })
-
-    const [stdout, exitCode] = await Promise.all([
-      new Response(proc.stdout).text(),
-      proc.exited,
-    ])
-
-    if (exitCode !== 0) {
-      const stderr = await new Response(proc.stderr).text()
-      return { err: stderr.trim() || "my-ascii exited non-zero" }
-    }
-
-    // Return one frame per element: an array of lines (strings).
-    return { frames: [stdout.trimEnd().split("\n")] }
+  async render(win) {
+    const frame = Array.from({ length: win.h }, () => "█".repeat(win.w))
+    return { frames: [frame] }
   },
 }
 
 const plugin: HermPlugin = {
-  id: "acme.ascii-rasterizer",
+  id: "acme.blocks",
+  enabled: false,
   tui(api) {
-    // Registration is scope-tracked. Deactivating the plugin removes
-    // the rasterizer from the picker automatically.
-    api.eikon.rasterizer.register(asciiRasterizer)
+    api.eikon.rasterizer.register(rasterizer)
   },
 }
 
 export default plugin
 ```
-
-<AccordionGroup>
-  <Accordion title="Handling video sources (multi-frame)">
-    When the source is a video, `win.frames` is greater than 1. `win.gray` contains all `N` planes vstacked as a single `win.w × (win.h × N)` buffer, and `win.png()` encodes them as one tall image. Return `win.frames` frames in your result array. If your backend only handles still images, call it once per frame using `eachFrame(win, i)` from `utils/eikon-render`, or render the full filmstrip and split the output every `win.h` rows.
-  </Accordion>
-  <Accordion title="In-process rasterizers">
-    If you are implementing the glyph mapping in TypeScript rather than shelling out to a subprocess, read `win.gray` directly — it is a plain `Uint8Array` you can iterate over. `win.gray` is a fresh copy each call, so you are free to mutate it (e.g. for gamma correction) before encoding.
-  </Accordion>
-</AccordionGroup>
 
 ## Related docs
 

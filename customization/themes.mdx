@@ -1,27 +1,23 @@
 ---
 title: "Themes and skins: personalize your Herm terminal UI"
 sidebarTitle: "Themes"
-description: "Browse 40+ built-in themes, open the live picker with /theme or <leader>t, fix tmux color issues, and switch skins that bundle a theme and eikon preset."
+description: "Browse Herm themes, use the live picker, fix tmux color issues, and switch skins that pair a theme with an eikon preset."
 ---
 
-Herm ships with more than 40 built-in color themes and a live picker that lets you preview and apply any of them without restarting. You can open the picker at any time from the composer, flip through themes instantly, and your choice is saved automatically to `~/.hermes/herm/tui.json` so it persists across sessions. For a more complete brand change, the `/skin` command goes a step further — it swaps the theme *and* an eikon preset together as a coordinated look.
+Herm ships with dozens of built-in color themes. The picker previews themes without restarting, then stores your choice in `~/.hermes/herm/tui.json` or `$HERM_CONFIG_DIR/tui.json`.
 
-## Opening the theme picker
+The default first-boot theme is `tokyonight`.
 
-There are two ways to open the theme picker:
+## Open the theme picker
 
-- **Slash command:** type `/theme` in the composer and press `Return`.
-- **Leader key:** press `Ctrl+X` then `t` (the default leader chord).
+- Type `/theme` in the composer.
+- Press `<leader>t`. The default leader is `Ctrl+X`.
 
-Once the picker is open, arrow keys scroll through the list and `Return` applies the highlighted theme. Your selection is written to `~/.hermes/herm/tui.json` immediately.
-
-<Tip>
-  The default theme at first boot is **tokyonight**. If you want to go back to it at any time, open the picker and select it or run `/theme` and choose it from the list.
-</Tip>
+Use the arrow keys to move through themes. Press `Return` to apply the highlighted theme.
 
 ## Built-in themes
 
-The following table is generated from `src/theme/manifest.ts` in the Herm source repo.
+The table is generated from `src/theme/manifest.ts` in the Herm source repo.
 
 {/* BEGIN AUTO-GENERATED: themes */}
 | Theme | Primary | Accent | Background |
@@ -70,45 +66,39 @@ The following table is generated from `src/theme/manifest.ts` in the Herm source
 | `zenburn` | `#8cd0d3` | `#93e0e3` | `#3f3f3f` |
 {/* END AUTO-GENERATED: themes */}
 
-## Fixing colors in tmux
+## Fix colors in tmux
 
-<Note>
-  If colors look washed out, banded, or wrong inside tmux, the issue is almost always terminal type negotiation — not the theme itself.
-</Note>
-
-Add the following line to your `~/.tmux.conf` and then reload (`tmux source ~/.tmux.conf`):
+If colors look washed out or banded inside tmux, configure tmux to advertise 256-color support.
 
 ```bash
 set -g default-terminal "tmux-256color"
 ```
 
-This tells tmux to advertise full 256-color support to the programs running inside it, which Herm needs to render theme colors accurately.
+Reload tmux with `tmux source ~/.tmux.conf`, then restart Herm.
 
 ## Skins
 
-A **skin** bundles a color theme *and* an eikon preset into a single named look. Running `/skin` lets you switch both at once so the full visual identity — colors, agent avatar, and UI branding — changes together.
+A skin applies a Hermes Agent skin setting. When Herm has a matching theme or bundled eikon, it mirrors those visuals too.
 
 ```text
 /skin [name]
 ```
 
-Available built-in skin names:
+Built-in skin names are defined in Herm source:
 
 | Skin | Character |
 |---|---|
 | `default` | Standard Hermes look |
-| `ares` | Warm red, warrior persona |
-| `mono` | Monochrome, minimal |
-| `slate` | Cool dark-navy |
-| `daylight` | Light, airy |
+| `ares` | Warm red |
+| `mono` | Monochrome |
+| `slate` | Dark navy |
+| `daylight` | Light palette |
 | `warm-lightmode` | Warm light palette |
 | `poseidon` | Deep ocean blue |
 | `sisyphus` | High-contrast charcoal |
-| `charizard` | Fiery orange |
+| `charizard` | Warm orange |
 
-<Tip>
-  You can also type `/skin` with no argument to see the popover and tab-complete through available skin names.
-</Tip>
+Type `/skin` without an argument to browse available names.
 
 ## Where preferences are saved
 
@@ -118,7 +108,7 @@ Theme and skin selections are written to:
 ~/.hermes/herm/tui.json
 ```
 
-You can inspect or hand-edit this file to set a theme without opening Herm — just set the `"theme"` key to any name from the table above and save. The change takes effect the next time Herm starts.
+If `HERM_CONFIG_DIR` is set, Herm writes `tui.json` there instead.
 
 ## Related docs
 

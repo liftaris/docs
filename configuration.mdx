@@ -4,7 +4,7 @@ sidebarTitle: "Configuration"
 description: "All environment variables Herm reads, what each one does, and how to relocate Herm's preferences and input history to a custom path."
 ---
 
-Herm is designed to work with zero configuration out of the box. As long as Hermes Agent is installed and your Hermes home directory exists at `~/.hermes`, you can run `herm` with no extra setup. Every environment variable described on this page is **optional** — set them only when the defaults do not match your environment.
+Herm is designed to work with zero configuration out of the box. As long as Hermes Agent is installed and your Hermes home directory exists at `~/.hermes`, you can run `herm` with no extra setup. Every environment variable described on this page is **optional**: set them only when the defaults do not match your environment.
 
 ## Environment variables
 
@@ -17,17 +17,18 @@ Herm's environment-variable surface is generated from the Herm source repo. Most
 | `CONTROL_BIND` | Control server bind address. Defaults to `127.0.0.1`. |
 | `CONTROL_PORT` | Control server port. Defaults to `7777`. |
 | `EDITOR` | Fallback editor for opening prompt drafts. |
-| `EIKON_URL` | Legacy marketplace catalog override used by the Marketplace tab. |
+| `EIKON_URL` | Override the native Eikon Marketplace catalog URL. |
 | `HERMES_AGENT_ROOT` | Hermes Agent source/install tree used to launch the gateway. |
 | `HERMES_CWD` | Working directory passed to the gateway session. |
 | `HERMES_HOME` | Hermes data directory. Defaults to `~/.hermes`. |
 | `HERMES_KANBAN_BOARD` | Default kanban board filter/selection. |
 | `HERMES_KANBAN_BUSY_TIMEOUT_MS` | Kanban busy timeout in milliseconds. |
 | `HERMES_KANBAN_HOME` | Pin the kanban data home. |
+| `HERMES_MANAGED` | Marks package-manager-managed Hermes installs. |
 | `HERMES_PYTHON` | Python interpreter used for the gateway subprocess. |
 | `HERMES_TUI_NO_CONFIRM` | Skip Herm client-side destructive slash confirmations when set to `1`. |
 | `HERM_CONFIG_DIR` | Herm TUI preferences directory. Defaults to `$HERMES_HOME/herm`. |
-| `HERM_EIKON_MARKETPLACE` | Override the public Eikon catalog index URL. |
+| `HERM_EIKON_MARKETPLACE` | Override the lower-level Eikon catalog loader default. The native Marketplace tab uses `EIKON_URL`. |
 | `HERM_IO_INLINE` | Inline I/O payload mode for Herm internal I/O. |
 | `PERF` | Enable performance logging or verbose performance mode. |
 | `VIRTUAL_ENV` | Preferred Python virtualenv when resolving the gateway interpreter. |
@@ -42,7 +43,7 @@ Herm writes its own runtime preferences to a single JSON file:
 $HERM_CONFIG_DIR/tui.json
 ```
 
-This file stores themes, keybinding overrides, and other runtime preferences. You can edit it by hand, but the recommended way to change themes and keybindings is through the TUI itself — use `/theme` to pick a color scheme or `/keys` to view and rebind shortcuts. Changes are written to `tui.json` automatically.
+This file stores themes, keybinding overrides, and other runtime preferences. You can edit it by hand, but the recommended way to change themes and keybindings is through the TUI itself: use `/theme` to pick a color scheme or `/keys` to view and rebind shortcuts. Changes are written to `tui.json` automatically.
 
 If `HERM_CONFIG_DIR` is not set, the file lives at `~/.hermes/herm/tui.json`.
 
@@ -53,7 +54,7 @@ Because Herm runs on Bun, it **automatically loads a `.env` file** from the work
 Create a `.env` file alongside your project or in the directory from which you typically launch Herm:
 
 ```bash .env
-# All variables are optional — herm runs without any of them.
+# All variables are optional: herm runs without any of them.
 
 # Relocate the Hermes data directory (profiles, sessions, eikons, etc.).
 # Default: ~/.hermes
@@ -77,7 +78,7 @@ Create a `.env` file alongside your project or in the directory from which you t
 </Note>
 
 <Warning>
-  Never commit a `.env` file that contains real credentials or sensitive paths to a public repository. The example above shows all variables commented out for safety — uncomment only the ones you actually need.
+  Never commit a `.env` file that contains real credentials or sensitive paths to a public repository. The example above shows all variables commented out for safety: uncomment only the ones you actually need.
 </Warning>
 
 ## Related docs
