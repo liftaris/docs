@@ -5,7 +5,9 @@
     "validate": "mint validate",
     "links": "mint broken-links --check-anchors --check-redirects --check-snippets",
     "a11y": "mint a11y",
-    "check": "npm run validate && npm run links && npm run a11y"
+    "check": "npm run validate && npm run links && npm run a11y",
+    "links:external": "python scripts/check-external-links.py --verbose",
+    "links:external:quiet": "python scripts/check-external-links.py"
   },
   "devDependencies": {}
 }
