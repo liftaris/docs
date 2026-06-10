@@ -60,7 +60,7 @@ Herm is distributed as the `herm-tui` package on npm and runs on top of Hermes A
     On first launch Herm reads your Hermes home from `~/.hermes` (or `HERMES_HOME` if set), starts the Hermes Agent gateway subprocess, and renders the full TUI. If the gateway fails to start, check that Hermes Agent is installed and that `~/.hermes` exists.
 
     <Note>
-      If text looks garbled or colours are wrong inside tmux, add `set -g default-terminal "tmux-256color"` to your `~/.tmux.conf` and restart tmux. For hard-to-read text on dark backgrounds, try a lighter theme such as `daylight`, `mercury`, or `github` via the `/theme` slash command.
+      If text looks garbled or colors are wrong inside tmux, add `set -g default-terminal "tmux-256color"` to your `~/.tmux.conf` and restart tmux. For hard-to-read text on dark backgrounds, try a lighter theme such as `daylight`, `mercury`, or `github` via the `/theme` slash command.
     </Note>
   </Step>
   <Step title="Navigate the interface">
@@ -85,7 +85,7 @@ Herm is distributed as the `herm-tui` package on npm and runs on top of Hermes A
     - To switch models, run a session action, or change a theme mid-conversation, type `/` to open the slash command popover and pick from the list.
 
     <Tip>
-      Type `/keys` to browse and rebind keyboard shortcuts, or `/theme` to switch the colour scheme — both work without leaving the chat input.
+      Type `/keys` to browse and rebind keyboard shortcuts, or `/theme` to switch the color scheme — both work without leaving the chat input.
     </Tip>
   </Step>
 </Steps>
@@ -98,10 +98,16 @@ Herm is distributed as the `herm-tui` package on npm and runs on top of Hermes A
   </Card>
 
   <Card title="Themes & keybindings" icon="palette" href="/customization/themes">
-    Customise colours, rebind keys, and save your preferences.
+    Customize colors, rebind keys, and save your preferences.
   </Card>
 
   <Card title="Sessions" icon="clock-rotate-left" href="/features/sessions">
     Resume, title, and manage sessions from inside the TUI.
   </Card>
 </CardGroup>
+
+## Related docs
+
+- [Configuration](/configuration)
+- [Common issues](/troubleshooting/common-issues)
+- [Keybindings](/customization/keybindings)

@@ -127,8 +127,14 @@ In addition to the built-in commands listed above, the popover also surfaces com
 - **Plugins** — gateway-side plugins that register named commands.
 - **MCP prompts** — prompt templates served by connected MCP servers and surfaced as `/mcp-prompt-name` entries.
 
-Gateway commands are labeled with their source (`skill`, `plugin`, or `mcp`) in the popover. They are forwarded to `POST /api/slash` rather than handled locally. Use `/reload-skills` or `/reload-mcp` to refresh the list after adding new skills or MCP servers.
+Gateway commands are labeled with their source (`skill`, `plugin`, or `mcp`) in the popover. Herm forwards them to the live Hermes gateway instead of handling them locally. Use `/reload-skills` or `/reload-mcp` to refresh the list after adding new skills or MCP servers.
 
 <Tip>
   If the gateway is unreachable at startup, the popover falls back to showing only local commands. Gateway commands appear automatically once the connection is restored — no restart required.
 </Tip>
+
+## Related docs
+
+- [Chat](/features/chat)
+- [Keybindings](/customization/keybindings)
+- [Config tab](/features/config)

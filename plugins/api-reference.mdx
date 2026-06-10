@@ -167,7 +167,7 @@ api.ui.toast(opts: {
 api.ui.confirm(opts: {
   title: string
   body: string
-  danger?: boolean   // renders the confirm button in the error colour
+  danger?: boolean   // renders the confirm button in the error color
 }): Promise<boolean>
 ```
 
@@ -223,14 +223,14 @@ The store is **automatically namespaced by your plugin id** — you never need t
 ## Theme
 
 ```ts
-api.theme.current: Theme   // live snapshot of all colour tokens
+api.theme.current: Theme   // live snapshot of all color tokens
 api.theme.name: string     // e.g. "dark-default"
 api.theme.mode: "dark" | "light"
 api.theme.set(name: string): boolean   // returns false if name unknown
 api.theme.has(name: string): boolean
 ```
 
-Always read colours from `api.theme.current.*` (e.g. `.text`, `.textMuted`, `.accent`, `.backgroundElement`, `.error`, `.border`). Never use raw hex literals — they bypass the live theme and will look wrong when the user switches themes.
+Always read colors from `api.theme.current.*` (e.g. `.text`, `.textMuted`, `.accent`, `.backgroundElement`, `.error`, `.border`). Never use raw hex literals — they bypass the live theme and will look wrong when the user switches themes.
 
 ---
 
@@ -330,7 +330,7 @@ Herm uses the **OpenTUI React renderer**, not React DOM. The rules are different
 - Use `<box>` for layout and `<scrollbox scrollY>` for scrollable regions.
 - Mouse handlers belong on `<box>` or `<text>` nodes — not on `<span>`.
 - `wrapMode` accepts `"none"`, `"word"`, or `"char"`.
-- All colours must come from `api.theme.current.*`. Raw hex literals bypass the live theme.
+- All colors must come from `api.theme.current.*`. Raw hex literals bypass the live theme.
 
 Do not import directly from `src/theme`, `src/keys`, `src/context`, or `src/ui`. Always route through `api`. This requirement exists so your plugin will remain loadable once external loading lands.
 
@@ -347,3 +347,9 @@ The following surfaces have seams in the codebase but are not yet available to p
 | **`api.state`** — direct home-store access | Use `api.client.request()` in the meantime |
 | **`api.theme.install`** — plugin-shipped theme JSON | Not yet available |
 | **`sidebar_content`, `sidebar_footer`, `prompt_right`, `splash_footer` slots** | Declared but not yet mounted at all host call sites |
+
+## Related docs
+
+- [Plugin overview](/plugins/overview)
+- [Plugin examples](/plugins/examples)
+- [Eikon overview](/eikon/overview)
