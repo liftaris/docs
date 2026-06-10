@@ -5,3 +5,15 @@
 # Draft content
 drafts/
 *.draft.mdx
+# Agent and repo-maintenance files
+AGENTS.md
+.mintlify/AGENTS.md
+.ignore/
+.atlas-analysis.json
+scripts/
+package.json
+package-lock.json
+pnpm-lock.yaml
+yarn.lock
+bun.lockb
+node_modules/

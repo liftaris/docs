@@ -1,33 +1,22 @@
-> **First-time setup**: Customize this file for your project. Prompt the user to customize this file for their project.
-> For Mintlify product knowledge (components, configuration, writing standards),
-> install the Mintlify skill: `npx skills add https://mintlify.com/docs`
+# Herm documentation repo instructions
 
-# Documentation project instructions
+This repository contains the Mintlify site for Herm.
 
-## About this project
+- Site config: `docs.json`
+- Pages: `*.mdx`
+- Reusable snippets: `snippets/`
+- Private Mintlify agent instructions: `.mintlify/AGENTS.md`
+- Source repo: `/home/kaio/Dev/herm`
+- Eikon source repo: `/home/kaio/Dev/eikon`
 
-- This is a documentation site built on [Mintlify](https://mintlify.com)
-- Pages are MDX files with YAML frontmatter
-- Configuration lives in `docs.json`
-- Run `mint dev` to preview locally
-- Run `mint broken-links` to check links
+Root `AGENTS.md` is ignored by Mintlify through `.mintignore`. Keep public-facing docs in MDX pages and private operational notes under `.ignore/`.
 
-## Terminology
+## Required checks
 
-{/* Add product-specific terms and preferred usage */}
-{/* Example: Use "workspace" not "project", "member" not "user" */}
+```bash
+mint validate
+mint broken-links --check-anchors --check-redirects --check-snippets
+mint a11y
+```
 
-## Style preferences
-
-{/* Add any project-specific style rules below */}
-
-- Use active voice and second person ("you")
-- Keep sentences concise — one idea per sentence
-- Use sentence case for headings
-- Bold for UI elements: Click **Settings**
-- Code formatting for file names, commands, paths, and code references
-
-## Content boundaries
-
-{/* Define what should and shouldn't be documented */}
-{/* Example: Don't document internal admin features */}
+Run `python scripts/sync-herm-docs.py` before editing generated reference sections.

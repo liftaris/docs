@@ -2,13 +2,13 @@
   "$schema": "https://mintlify.com/docs.json",
   "theme": "willow",
   "name": "Herm",
-  "description": "Documentation for Herm — the terminal UI for Hermes Agent.",
+  "description": "Documentation for Herm, the keyboard-driven terminal UI for Hermes Agent.",
   "colors": {
-    "primary": "#755824",
-    "light": "#ee9c03",
-    "dark": "#090908"
+    "primary": "#7A4D22",
+    "light": "#FFC799",
+    "dark": "#B67845"
   },
-  "favicon": "https://media.brand.dev/823ddaa7-db19-483c-b274-cbaf526d5561.png",
+  "favicon": "/favicon.ico",
   "icons": {
     "library": "tabler"
   },
@@ -16,7 +16,13 @@
     "eyebrows": "breadcrumbs"
   },
   "contextual": {
-    "options": ["copy", "view", "assistant", "mcp", "add-mcp"]
+    "options": [
+      "copy",
+      "view",
+      "assistant",
+      "mcp",
+      "add-mcp"
+    ]
   },
   "navigation": {
     "global": {
@@ -99,11 +105,20 @@
     ]
   },
   "logo": {
-    "light": "https://media.brand.dev/78bd2afc-d387-429e-932c-182e70b1e489.svg",
-    "dark": "https://media.brand.dev/78bd2afc-d387-429e-932c-182e70b1e489.svg"
+    "light": "/logo/light.svg",
+    "dark": "/logo/dark.svg"
   },
   "navbar": {
-    "links": [],
+    "links": [
+      {
+        "label": "Hermes Agent",
+        "href": "https://hermes-agent.nousresearch.com/docs"
+      },
+      {
+        "label": "Eikon gallery",
+        "href": "https://eikon.liftaris.dev"
+      }
+    ],
     "primary": {
       "type": "github",
       "href": "https://github.com/liftaris/herm"
@@ -114,8 +129,7 @@
       "github": "https://github.com/liftaris/herm"
     }
   },
-  "banner": {
-    "content": "You're not supposed to be here, but congrats on finding this page! This site is a work in progress",
-    "type": "warning"
+  "seo": {
+    "indexing": "all"
   }
 }
