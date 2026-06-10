@@ -4,7 +4,7 @@ sidebarTitle: "Automation"
 description: "Switch Hermes profiles, manage kanban boards for agentic tasks, and schedule recurring cron jobs — all from the Profiles & Automation tab in Herm."
 ---
 
-The Profiles & Automation tab (press **Alt+3** or type `/automation` in the chat composer) consolidates the three operational surfaces you use to direct long-running agent work: **Kanban** for task-level agentic workflows, **Profiles** for switching Hermes configurations, and **Cron** for scheduled recurring jobs. Navigate between them with **Shift+Left / Shift+Right**.
+The Profiles & Automation tab (press **Alt+3** or type `/automation` in the chat composer) consolidates the three operational surfaces you use to direct long-running agent work. Use **Kanban** for task-level agentic workflows, **Profiles** for switching Hermes configurations, and **Cron** for scheduled recurring jobs. Navigate between them with **Shift+Left / Shift+Right**.
 
 ## Kanban
 
@@ -49,7 +49,7 @@ Tasks move through the following statuses from left to right:
 
 The task detail view surfaces **diagnostics** emitted by Hermes Agent's rule engine (`hermes kanban diagnostics`). Diagnostic entries carry a severity level — `warning`, `error`, or `critical` — a title, a detail message, and suggested actions. Herm displays these per-task so you can spot stuck or failing agent runs at a glance.
 
-Structured status transitions (complete, block, unblock, archive, assign, dispatch) are executed via the Hermes CLI (`hermes kanban <verb>`), which ensures all associated lifecycle steps fire correctly.
+The Hermes CLI (`hermes kanban <verb>`) executes structured status transitions (complete, block, unblock, archive, assign, dispatch) and ensures all associated lifecycle steps fire correctly.
 
 ### Multiple boards
 
@@ -87,7 +87,7 @@ Each profile entry shows:
 
 ### Profile names
 
-Profile names must match the pattern `[a-z0-9][a-z0-9_-]{0,63}`. Names like `hermes`, `default`, `test`, `tmp`, `root`, and `sudo` are reserved. All write operations (create, delete, rename, export, use) route through the Hermes CLI so validation, skill seeding, and wrapper alias management are handled authoritatively.
+Profile names must match the pattern `[a-z0-9][a-z0-9_-]{0,63}`. Names like `hermes`, `default`, `test`, `tmp`, `root`, and `sudo` are reserved. All write operations (create, delete, rename, export, use) route through the Hermes CLI, which authoritatively handles validation, skill seeding, and wrapper alias management.
 
 ## Cron
 

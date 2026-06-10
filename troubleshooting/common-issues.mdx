@@ -1,6 +1,6 @@
 ---
 title: "Common Herm TUI problems: diagnosis and step-by-step fixes"
-sidebarTitle: "Common Issues"
+sidebarTitle: "Common issues"
 description: "Diagnose and fix common Herm problems: tmux color rendering, display corruption, inline images, gateway startup failures, and stale session state."
 ---
 
@@ -203,11 +203,11 @@ Type `/reload` in the chat composer and press Enter. Herm calls the `reload.env`
 </Accordion>
 
 <Accordion title="Windows: Eikon tab crashes">
-On Windows, the Eikon tab could crash when Herm was unable to locate the correct Python virtual environment for the gateway subprocess — particularly in environments where venv paths use Windows-style separators or the Python executable name differs.
+On Windows, the Eikon tab could crash when Herm could not locate the correct Python virtual environment for the gateway subprocess. This happened most often when venv paths used Windows-style separators or the Python executable name differed.
 
 <Steps>
   <Step title="Update to Herm v1.8.1 or later">
-    This crash was fixed in v1.8.1, which added cross-platform compatibility for Python venv path resolution, a Windows `python` executable fallback, and error handling to prevent unhandled rejections from killing the app.
+    Herm v1.8.1 fixed this crash. The release added cross-platform Python venv path resolution, a Windows `python` executable fallback, and error handling that prevents unhandled rejections from killing the app.
 
     ```bash
     bun add -g herm-tui   # updates to latest stable

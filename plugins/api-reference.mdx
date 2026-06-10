@@ -1,6 +1,6 @@
 ---
 title: "Herm plugin API reference: HermPlugin and HermPluginApi"
-sidebarTitle: "API Reference"
+sidebarTitle: "API reference"
 description: "Complete reference for the HermPlugin interface and the api object — all extension points, lifecycle methods, and UI utilities available to plugins."
 ---
 
@@ -84,7 +84,7 @@ api.slots.register(p: {
 | `replace` | Your content replaces the host's default child entirely. |
 | `single_winner` | Only the contribution with the lowest `order` renders; all others are silently dropped. |
 
-A slot renderer that throws is caught by a per-plugin error boundary. The slot renders empty (or falls back to the host default) and the rest of the shell is unaffected.
+A per-plugin error boundary catches slot renderers that throw. The slot renders empty (or falls back to the host default), and the rest of the shell keeps working.
 
 ### SlotCtx
 

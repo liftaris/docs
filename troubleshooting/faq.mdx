@@ -9,7 +9,7 @@ Whether you're just getting started or have been running Herm in your daily work
 <AccordionGroup>
 
 <Accordion title="Does Herm replace Hermes Agent?">
-No. Herm is a keyboard-driven terminal UI (TUI) that operates Hermes Agent — it does not replace it, implement model providers itself, or own any Hermes runtime behavior. Think of Herm as an operator dashboard: it gives you a single terminal interface for chatting with Hermes, managing sessions, inspecting context, running kanban work, and configuring your Hermes home, all without leaving the shell.
+No. Herm is a keyboard-driven terminal UI (TUI) that operates Hermes Agent — it does not replace it, implement model providers itself, or own any Hermes runtime behavior. Think of Herm as an operator dashboard. It gives you a single terminal interface for chatting with Hermes, managing sessions, inspecting context, running kanban work, and configuring your Hermes home — all without leaving the shell.
 
 Hermes Agent must be installed and running for Herm to function. Herm spawns the Hermes gateway as a subprocess and communicates with it over a stdio JSON-RPC connection.
 </Accordion>
@@ -51,7 +51,7 @@ You can also navigate to the **Config** tab and look under the Models category, 
 </Accordion>
 
 <Accordion title="Can I use Herm on Windows?">
-Yes, Windows support was added in v1.6.0. The npm launcher shim resolves correctly on Windows via a `.ps1` script, so a standard `npm i -g herm-tui` install should work.
+Yes. Herm added Windows support in v1.6.0. The npm launcher shim resolves correctly on Windows via a `.ps1` script, so a standard `npm i -g herm-tui` install should work.
 
 <Note>
 If the Eikon tab crashes or you see Python-related errors on Windows, set the `HERMES_PYTHON` environment variable to the full path of your Python interpreter. This is needed when Herm cannot automatically discover the correct Python venv — a fix for the most common Windows crash scenario was shipped in v1.8.1.

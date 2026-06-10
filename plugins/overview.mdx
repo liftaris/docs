@@ -4,7 +4,7 @@ sidebarTitle: "Overview"
 description: "Overview of the Herm plugin system — what plugins can do, current limitations (bundled-only), and how to get started building your first plugin."
 ---
 
-Herm's plugin system lets you extend the terminal UI without touching core shell code. A plugin is a single TypeScript module that exports an `{ id, tui }` object. When Herm activates the plugin it calls `tui(api)`, your code registers whatever it needs through the `api` object, and everything you register is automatically cleaned up the moment the plugin deactivates. There is no teardown boilerplate to write.
+Herm's plugin system lets you extend the terminal UI without touching core shell code. A plugin is a single TypeScript module that exports an `{ id, tui }` object. When Herm activates the plugin, it calls `tui(api)`. Your code registers whatever it needs through the `api` object, and Herm automatically cleans up everything you registered the moment the plugin deactivates. There is no teardown boilerplate to write.
 
 ## What plugins can do
 
