@@ -1,92 +1,85 @@
 ---
-title: "Install Herm and Send Your First Message in Minutes"
+title: "Install Herm and send your first message"
 sidebarTitle: "Quickstart"
-description: "Install the Herm TUI, connect it to Hermes Agent, and send your first message — from zero to an active chat session in under five minutes."
+description: "Install Herm, connect it to Hermes Agent, launch the TUI, navigate the main tabs, and send your first message."
 ---
 
 import HermesAgentPrerequisite from "/snippets/hermes-agent-prerequisite.mdx";
 
-Herm is distributed as the `herm-tui` package on npm and runs on top of Hermes Agent. The steps below take you from a fresh machine to an active chat session in about five minutes.
+Herm is published as the `herm-tui` package and runs on top of Hermes Agent.
 
 <HermesAgentPrerequisite />
 
 <Steps>
   <Step title="Try Herm without installing">
-    If you have Bun installed, you can run Herm directly from the registry to see if it works in your environment before committing to a global install.
+    If you have Bun installed, run Herm from the registry:
 
     ```bash
     bunx herm-tui
-```
+    ```
 
-    Bun downloads and executes the latest stable release in a temporary cache. No files are written to your global paths. Press `Ctrl+C` or use the command palette (`Ctrl+K`) to quit when you are done exploring.
+    Double-tap `Ctrl+C` to quit, or use `Ctrl+K` to open the command palette and choose an exit action.
   </Step>
+
   <Step title="Install Herm globally">
-    Once you are happy with the trial run, install Herm globally so the `herm` command is always on your `PATH`.
+    Install the `herm` command with Bun or npm.
 
     <CodeGroup>
 
-    ```bash Bun (stable)
+    ```bash Bun stable
     bun add -g herm-tui
-```
+    ```
 
     ```bash npm
     npm i -g herm-tui
-```
+    ```
 
-    ```bash Bun (bleeding edge)
+    ```bash Bun next
     bun add -g herm-tui@next
-```
+    ```
 
     </CodeGroup>
 
-    <Tip>
-      The `@next` tag tracks every development push and may include breaking changes. Use it if you want the absolute latest features; use the stable tag for day-to-day work.
-    </Tip>
+    The `@next` tag tracks development releases and can break. Use the stable tag for normal use.
+  </Step>
 
-    Verify the install succeeded by checking the version:
+  <Step title="Verify the command">
+    Check that the launcher is on your `PATH`:
 
     ```bash
     herm --version
-```
+    ```
   </Step>
+
   <Step title="Launch Herm">
-    You have two launch modes depending on whether you want to continue where you left off or begin fresh.
+    Start a fresh session or resume the most recent session:
 
     ```bash
-    herm        # start a new session
-    herm -c     # resume the last session
-```
+    herm
+    herm -c
+    ```
 
-    On first launch Herm reads your Hermes home from `~/.hermes` (or `HERMES_HOME` if set), starts the Hermes Agent gateway subprocess, and renders the full TUI. If the gateway fails to start, check that Hermes Agent is installed and that `~/.hermes` exists.
-
-    <Note>
-      If text looks garbled or colors are wrong inside tmux, add `set -g default-terminal "tmux-256color"` to your `~/.tmux.conf` and restart tmux. For hard-to-read text on dark backgrounds, try a lighter theme such as `daylight`, `mercury`, or `github` via the `/theme` slash command.
-    </Note>
+    Herm reads `HERMES_HOME`, starts the Hermes Agent gateway subprocess, and renders the TUI. If startup fails, open [Common issues](/troubleshooting/common-issues).
   </Step>
+
   <Step title="Navigate the interface">
-    Herm is organised into five top-level tabs. You can see them across the top of the screen as soon as the TUI loads.
+    Herm has five top-level tabs.
 
     | Shortcut | Action |
-    | --- | --- |
-    | `Alt+Left` / `Alt+Right` | Cycle to the previous / next tab |
-    | `Alt+1` – `Alt+5` | Jump directly to Chat, Sessions, Profiles & Automation, Config, or Eikon |
-    | `Tab` | Cycle focus between the input area and the content region within the active tab |
-    | `Ctrl+K` | Open the **command palette** — search all actions and slash commands |
-    | `/` | Open the **slash command popover** in the chat input |
-
-    Arrow keys navigate within the currently focused tab. Each tab also has its own sub-tab strip — for example, **Sessions** contains List, Context, and Analytics sub-tabs reachable with the in-tab navigation.
+    |---|---|
+    | `Alt+Left` / `Alt+Right` | Previous or next top-level tab |
+    | `Alt+1` through `Alt+5` | Jump to Chat, Sessions, Profiles & Automation, Config, or Eikon |
+    | `<leader>1` through `<leader>5` | Same tab jumps through the leader prefix |
+    | `Shift+Left` / `Shift+Right` | Previous or next sub-tab when a tab has sub-tabs |
+    | `Tab` | Move focus within the current tab |
+    | `Ctrl+K` | Open the command palette |
+    | `/` | Open the slash command popover in the composer |
   </Step>
+
   <Step title="Send your first message">
-    Press `Alt+1` (or just start typing) to make sure you are on the **Chat** tab. The chat input is at the bottom of the screen.
+    Go to the **Chat** tab, type a prompt in the composer, and press `Enter`.
 
-    - Type your message and press `Enter` to send it.
-    - Herm streams the response with markdown rendering, LaTeX-to-unicode conversion, and expandable tool-call chips.
-    - To attach a file or diff as context, type `@` followed by a file path.
-    - To switch models, run a session action, or change a theme mid-conversation, type `/` to open the slash command popover and pick from the list.
-
-    <Tip>
-      Type `/keys` to browse and rebind keyboard shortcuts, or `/theme` to switch the color scheme — both work without leaving the chat input.
-    </Tip>
+    Use `@` to attach files or diffs. Use `/` for commands such as `/model`, `/theme`, `/keys`, `/new`, and `/status`.
   </Step>
 </Steps>
 
@@ -94,15 +87,15 @@ Herm is distributed as the `herm-tui` package on npm and runs on top of Hermes A
 
 <CardGroup cols={3}>
   <Card title="Chat features" icon="message" href="/features/chat">
-    Streaming, file context with `@`, slash commands, and session management.
+    Streaming, file context, slash commands, voice mode, and tool frames.
   </Card>
 
-  <Card title="Themes & keybindings" icon="palette" href="/customization/themes">
-    Customize colors, rebind keys, and save your preferences.
+  <Card title="Themes and keybindings" icon="palette" href="/customization/themes">
+    Theme picker, skins, leader key, and rebindable shortcuts.
   </Card>
 
   <Card title="Sessions" icon="clock-rotate-left" href="/features/sessions">
-    Resume, title, and manage sessions from inside the TUI.
+    Resume, title, inspect, branch, and compress sessions.
   </Card>
 </CardGroup>
 

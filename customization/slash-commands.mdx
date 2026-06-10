@@ -4,7 +4,7 @@ sidebarTitle: "Slash Commands"
 description: "Type / in the composer to open the slash popover and explore every built-in client and session command with aliases and arguments."
 ---
 
-Slash commands give you quick, keyboard-driven access to Herm's full feature surface without leaving the composer. Typing `/` in the input area opens a live popover that filters commands as you type, shows descriptions and argument hints, and supports tab-completion for subcommands. Press `Return` on any highlighted entry — or finish typing the full command and press `Return` — to execute it.
+Slash commands give you quick, keyboard-driven access to Herm's full feature surface without leaving the composer. Typing `/` in the input area opens a live popover that filters commands as you type, shows descriptions and argument hints, and supports tab-completion for subcommands. Press `Return` on a highlighted entry, or finish typing the command and press `Return`.
 
 ## How the popover works
 
@@ -17,7 +17,7 @@ Start typing `/` followed by the command name. The popover narrows the list in r
 ```
 
 <Note>
-  The popover merges **local commands** (handled directly by the Herm client) with **gateway commands** fetched from `GET /api/commands` — including skills, plugins, and MCP prompts registered with your Hermes gateway. The tables on this page cover the built-in local commands. Gateway commands appear in the same popover once the connection is established.
+  The popover merges **local commands** (handled directly by the Herm client) with **gateway commands** discovered from the live Hermes gateway, including skills, plugins, and MCP prompts. The tables on this page cover the built-in local commands. Gateway commands appear in the same popover once the connection is established.
 </Note>
 
 ## Command categories
@@ -41,56 +41,69 @@ Commands are grouped into four categories:
 
 ## Built-in local commands
 
-The following reference is generated from `src/app/slashCommands.ts` in the Herm source repo. Gateway commands, skills, plugins, and MCP prompts are discovered at runtime.
+The following fallback catalog is generated from `src/app/slashCommands.ts` in the Herm source repo. Herm also intercepts some live-session gateway commands for safety. Gateway commands, skills, plugins, and MCP prompts are discovered at runtime.
 
 {/* BEGIN AUTO-GENERATED: local-slash-commands */}
 ## Client commands
 
 | Command | Aliases | Args | Description |
 |---|---|---|---|
-| `/clear` | — | `—` | Clear chat messages |
-| `/new` | `reset` | `—` | Start a new session |
-| `/theme` | — | `[light\|dark]` | Switch color theme or mode |
-| `/help` | — | `—` | Show keyboard shortcuts |
-| `/keys` | — | `—` | Rebind keyboard shortcuts |
-| `/logs` | — | `—` | Show gateway stderr log |
-| `/title` | — | `[text]` | Set session title |
-| `/rollback` | — | `—` | Browse & restore checkpoints |
-| `/chafa` | — | `<path>` | Render image via chafa (demo) |
-| `/splash` | — | `—` | Show the launch splash |
-| `/skin` | — | `[name]` | Switch Hermes skin (+ theme + eikon) |
-| `/voice` | — | `[on\|off\|status\|tts]` | Toggle voice recording |
-| `/stash` | — | `[pop\|list]` | Park the prompt (pop/list to restore) |
+| `/clear` | None | `None` | Clear chat messages |
+| `/new` | `reset` | `None` | Start a new session |
+| `/theme` | None | `[light\|dark]` | Switch color theme or mode |
+| `/help` | None | `None` | Show keyboard shortcuts |
+| `/keys` | None | `None` | Rebind keyboard shortcuts |
+| `/logs` | None | `None` | Show gateway stderr log |
+| `/title` | None | `[text]` | Set session title |
+| `/rollback` | None | `None` | Browse & restore checkpoints |
+| `/chafa` | None | `<path>` | Render image via chafa (demo) |
+| `/splash` | None | `None` | Show the launch splash |
+| `/skin` | None | `[name]` | Switch Hermes skin (+ theme + eikon) |
+| `/voice` | None | `[on\|off\|status\|tts]` | Toggle voice recording |
+| `/stash` | None | `[pop\|list]` | Park the prompt (pop/list to restore) |
 
 ## Session commands
 
 | Command | Aliases | Args | Description |
 |---|---|---|---|
-| `/steer` | — | `[text]` | Inject a note mid-turn (no interrupt) |
-| `/reload-mcp` | — | `[now\|always]` | Restart MCP servers & rediscover tools |
-| `/reload` | — | `—` | Hot-reload ~/.hermes/.env (API keys) |
-| `/reload-skills` | `reload_skills` | `—` | Re-scan ~/.hermes/skills/ for added/removed skills |
-| `/goal` | — | `[text\|done\|pause\|resume\|clear\|status]` | Set/control the session goal |
+| `/steer` | None | `[text]` | Inject a note mid-turn (no interrupt) |
+| `/reload-mcp` | None | `[now\|always]` | Restart MCP servers & rediscover tools |
+| `/reload` | None | `None` | Hot-reload ~/.hermes/.env (API keys) |
+| `/reload-skills` | `reload_skills` | `None` | Re-scan ~/.hermes/skills/ for added/removed skills |
+| `/goal` | None | `[text\|done\|pause\|resume\|clear\|status]` | Set/control the session goal |
 | `/queue` | `q` | `[text]` | Queue a prompt for the next idle turn |
-| `/redo` | — | `—` | Re-send the last undone message |
+| `/redo` | None | `None` | Re-send the last undone message |
 | `/branch` | `fork` | `[name]` | Fork current conversation |
-| `/browser` | — | `[connect\|disconnect\|status] [url]` | Connect/disconnect a CDP browser |
+| `/browser` | None | `[connect\|disconnect\|status] [url]` | Connect/disconnect a CDP browser |
 
 ## Info commands
 
 | Command | Aliases | Args | Description |
 |---|---|---|---|
-| `/history` | — | `—` | Server-side transcript viewer |
-| `/status` | — | `—` | Version, model, paths |
-| `/usage` | — | `—` | Credits, account status, tokens, context fill, cost |
-| `/profile` | — | `—` | Active profile details |
+| `/history` | None | `None` | Server-side transcript viewer |
+| `/status` | None | `None` | Version, model, paths |
+| `/usage` | None | `None` | Credits, account status, tokens, context fill, cost |
+| `/profile` | None | `None` | Active profile details |
 
 ## Exit commands
 
 | Command | Aliases | Args | Description |
 |---|---|---|---|
-| `/quit` | `exit` | `—` | Exit herm |
+| `/quit` | `exit` | `None` | Exit herm |
 {/* END AUTO-GENERATED: local-slash-commands */}
+
+## Additional live-session commands
+
+Herm intercepts some commands that may also exist in the gateway so they act on the active TUI session safely. Common examples include:
+
+| Command | Description |
+|---|---|
+| `/model` | Open the model picker or set a model value |
+| `/resume` | Open session selection or resume by id |
+| `/compress` | Compress current context |
+| `/undo` / `/retry` | Rewind or retry recent session turns |
+| `/copy` / `/paste` / `/image` | Work with reply text, clipboard images, and image paths |
+| `/mouse` / `/redraw` | Toggle mouse capture or repaint the terminal |
 
 <Accordion title="Goal subcommands">
 
@@ -123,14 +136,14 @@ The `/browser` command manages a CDP browser connection:
 
 In addition to the built-in commands listed above, the popover also surfaces commands registered on your Hermes gateway. These include:
 
-- **Skills** — custom scripts in `~/.hermes/skills/` that expose slash commands.
-- **Plugins** — gateway-side plugins that register named commands.
-- **MCP prompts** — prompt templates served by connected MCP servers and surfaced as `/mcp-prompt-name` entries.
+- **Skills**: custom scripts in `~/.hermes/skills/` that expose slash commands.
+- **Plugins**: gateway-side plugins that register named commands.
+- **MCP prompts**: prompt templates served by connected MCP servers and surfaced as `/mcp-prompt-name` entries.
 
-Gateway commands are labeled with their source (`skill`, `plugin`, or `mcp`) in the popover. Herm forwards them to the live Hermes gateway instead of handling them locally. Use `/reload-skills` or `/reload-mcp` to refresh the list after adding new skills or MCP servers.
+Gateway commands appear in the same popover once the live Hermes gateway is connected. Herm forwards them to the gateway unless the command needs local live-session handling. Use `/reload-skills` or `/reload-mcp` to refresh the list after adding new skills or MCP servers.
 
 <Tip>
-  If the gateway is unreachable at startup, the popover falls back to showing only local commands. Gateway commands appear automatically once the connection is restored — no restart required.
+  If the gateway is unreachable at startup, the popover falls back to showing only local commands. Gateway commands appear automatically once the connection is restored: no restart required.
 </Tip>
 
 ## Related docs

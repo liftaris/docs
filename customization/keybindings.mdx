@@ -4,7 +4,7 @@ sidebarTitle: "Keybindings"
 description: "View and remap every Herm action with /keys, understand the leader-key prefix system, and see the full default keybinding table grouped by scope."
 ---
 
-Every action in Herm is backed by a named, rebindable key chord. The default bindings are designed to stay out of your way — a two-stroke **leader prefix** (default `Ctrl+X`) gates the most common session-management actions so they never collide with your text input. You can view all bindings at any time, remap anything that conflicts with your muscle memory, and your changes persist automatically in `~/.hermes/herm/tui.json`.
+Every action in Herm is backed by a named, rebindable key chord. The default bindings are designed to stay out of your way: a two-stroke **leader prefix** (default `Ctrl+X`) gates the most common session-management actions so they never collide with your text input. You can view all bindings at any time, remap anything that conflicts with your muscle memory, and your changes persist automatically in `~/.hermes/herm/tui.json`.
 
 ## Opening the keybinding editor
 
@@ -31,7 +31,7 @@ The **leader key** is a two-stroke prefix that gates a large set of session and 
 
 For example, the default binding to open a new session is `<leader>n`, which means: press `Ctrl+X`, then press `n`.
 
-The leader key itself is rebindable — change the `leader` action in `/keys` to any chord you prefer. A popular alternative is `Ctrl+\` for users who find `Ctrl+X` conflicts with their readline habits.
+The leader key itself is rebindable: change the `leader` action in `/keys` to any chord you prefer. A popular alternative is `Ctrl+\` for users who find `Ctrl+X` conflicts with their readline habits.
 
 <Note>
   Secondary alternates are shown in parentheses throughout the table below. For example, `editor.open` advertises `<leader>e` but also accepts `Ctrl+G` as a fallback so existing muscle memory keeps working while you learn the leader pattern.
@@ -148,7 +148,7 @@ All customized chords are stored in:
 ~/.hermes/herm/tui.json
 ```
 
-You can inspect this file to see only your overrides — actions you have not changed are not written, so the file stays small. Deleting an entry from the file reverts that action to its default chord on the next launch.
+You can inspect this file to see only your overrides: actions you have not changed are not written, so the file stays small. Deleting an entry from the file reverts that action to its default chord on the next launch.
 
 ## Related docs
 

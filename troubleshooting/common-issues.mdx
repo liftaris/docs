@@ -1,236 +1,144 @@
 ---
-title: "Common Herm TUI problems: diagnosis and step-by-step fixes"
+title: "Common Herm problems and fixes"
 sidebarTitle: "Common Issues"
-description: "Diagnose and fix common Herm problems: tmux color rendering, display corruption, inline images, gateway startup failures, and stale session state."
+description: "Diagnose common Herm problems with terminal colors, inline images, gateway startup, stale config, interrupts, focus, API keys, and Windows Python setup."
 ---
 
-Most Herm problems fall into one of a few categories: display rendering quirks that are artifacts of the terminal environment, gateway startup failures caused by a misconfigured Hermes home, or session state that has drifted out of sync. The sections below walk you through diagnosing and fixing each class of issue.
+Use this page when Herm starts but something looks wrong, feels stale, or cannot reach Hermes Agent.
+
+## Quick symptom table
+
+| Symptom | Likely cause | First fix |
+|---|---|---|
+| Colors look wrong in tmux | tmux terminal type lacks color support | Set `tmux-256color` |
+| Images do not render inline | `chafa` missing or not on `PATH` | Install `chafa` |
+| Gateway will not start | wrong Hermes home, agent root, or Python | Check `/logs` and `/status` |
+| Config or skills look stale | gateway has not reloaded files | Run `/reload`, `/reload-mcp`, or `/reload-skills` |
+| Display is garbled | terminal buffer drift | Press `Ctrl+L` |
+| Agent will not interrupt | one `Esc` only moves focus | Double-tap `Esc` |
+| Composer lost focus | another tab owns key input | Double-tap `Tab` |
+
+## Display
 
 <AccordionGroup>
+  <Accordion title="Colors look wrong in tmux">
+    Add a true-color terminal type to `~/.tmux.conf`:
 
-<Accordion title="Colors look wrong in tmux">
-Tmux's default terminal type does not advertise 256-color or true-color support, which causes Herm's theme colors to render incorrectly — typically as washed-out or incorrect palette entries.
-
-<Steps>
-  <Step title="Open your tmux configuration file">
-    Edit `~/.tmux.conf` in your preferred editor. Create the file if it does not already exist.
-  </Step>
-  <Step title="Add the correct default-terminal setting">
     ```bash
     set -g default-terminal "tmux-256color"
-```
-  </Step>
-  <Step title="Reload tmux configuration">
-    Inside a running tmux session, press your prefix key then `:`, and run:
-```bash
-    source-file ~/.tmux.conf
-```
-    Or start a fresh tmux session for the change to take full effect.
-  </Step>
-  <Step title="Restart Herm">
-    Close and reopen Herm. Colors should now render correctly.
-  </Step>
-</Steps>
+    ```
 
-<Note>
-If colors still look off after the tmux fix, try pressing `Ctrl+L` inside Herm to force a full terminal repaint.
-</Note>
-</Accordion>
+    Reload tmux with:
 
-<Accordion title="Text is hard to read">
-Some Herm themes use colors that clash with dark terminal backgrounds, making text difficult to read — especially in low-contrast environments.
+    ```bash
+    tmux source-file ~/.tmux.conf
+    ```
 
-Switch to a light-mode theme designed for readability in dark terminals:
+    Restart Herm after changing tmux configuration.
+  </Accordion>
 
-```text
-/theme
-```
+  <Accordion title="Text is hard to read">
+    Open `/theme` and choose a light or high-contrast theme such as `daylight`, `mercury`, `github`, or `warm-lightmode`.
+  </Accordion>
 
-This opens the interactive theme picker. Themes that work well in dark terminals include **daylight**, **mercury**, **github**, and **warm-lightmode**. Navigate the list with arrow keys and press Enter to apply a theme. The selection is saved immediately.
+  <Accordion title="Display looks garbled">
+    Press `Ctrl+L`. Herm clears its render baseline and repaints the full UI. This does not interrupt the active session.
+  </Accordion>
+</AccordionGroup>
 
-<Tip>
-You can also type part of a theme name in the picker to filter the list. To apply a specific theme, open `/theme`, type part of the theme name to filter the list, then press `Enter` on the highlighted row.
-</Tip>
-</Accordion>
+## Images and eikons
 
-<Accordion title="Inline images are not displaying">
-Herm renders inline images in the chat transcript using [chafa](https://hpjansson.org/chafa/), which converts images to terminal-compatible character art. If images appear as blank space or a placeholder, chafa is likely missing or not on your `PATH`.
+<AccordionGroup>
+  <Accordion title="Inline images are not displaying">
+    Herm renders inline images through [`chafa`](https://hpjansson.org/chafa/). Check whether it is installed:
 
-<Steps>
-  <Step title="Verify chafa is installed">
     ```bash
     which chafa
     chafa --version
-```
-    If the command is not found, install chafa using your system package manager. For example:
+    ```
+
+    Install it with your package manager:
 
     ```bash
-    # macOS (Homebrew)
-    brew install chafa
+    brew install chafa       # macOS
+    sudo apt install chafa   # Debian or Ubuntu
+    sudo dnf install chafa   # Fedora
+    ```
 
-    # Debian / Ubuntu
-    sudo apt install chafa
+    chafa is optional. Herm still works without inline image rendering.
+  </Accordion>
 
-    # Fedora
-    sudo dnf install chafa
-```
-  </Step>
-  <Step title="Confirm chafa is on your PATH">
-    The shell that launches Herm must be able to find `chafa`. If you installed chafa in a non-standard location, add it to `PATH` before running Herm.
-  </Step>
-  <Step title="Restart Herm">
-    Quit and relaunch Herm. Image rendering should now work for any inline image the agent produces.
-  </Step>
-</Steps>
+  <Accordion title="Eikon rendering fails">
+    Eikon Studio media decoding needs `ffmpeg`. The `native` rasterizer avoids `chafa`, but it still depends on `ffmpeg` for media decoding.
 
-<Note>
-chafa is an optional dependency. Herm works without it; images do not render inline when chafa is absent.
-</Note>
-</Accordion>
+    Install `ffmpeg`, restart Herm, then reopen Studio.
+  </Accordion>
+</AccordionGroup>
 
-<Accordion title="Gateway won't start or Herm can't find Hermes">
-Herm spawns the Hermes Agent gateway as a subprocess at startup. If the gateway fails to start, you will see an error on launch or the chat will remain in a perpetual loading state. Run `/logs` inside Herm (if the UI is visible) to see the gateway's stderr output.
+## Gateway startup
 
-Common causes and fixes:
+<AccordionGroup>
+  <Accordion title="Gateway will not start or Herm cannot find Hermes">
+    Herm starts the Hermes Agent gateway as a subprocess. If startup fails, run `/logs` when the UI is visible.
 
-**Hermes home not found**
+    Common overrides:
 
-Herm looks for your Hermes installation at `~/.hermes` by default. If yours lives elsewhere, set the environment variable:
+    ```bash
+    export HERMES_HOME=/path/to/hermes-home
+    export HERMES_AGENT_ROOT=/path/to/hermes-agent
+    export HERMES_PYTHON=/usr/bin/python3
+    ```
 
-```bash
-export HERMES_HOME=/path/to/your/hermes-home
-```
+    Use `/status` to confirm the resolved Herm version, gateway model, and paths.
+  </Accordion>
 
-**Non-standard hermes-agent source layout**
+  <Accordion title="API keys are not picked up after editing .env">
+    Run `/reload` after editing `~/.hermes/.env` or the active profile `.env` file.
 
-By default, Herm expects the `hermes-agent` source tree at `$HERMES_HOME/hermes-agent` — the location used by Homebrew and `hermes update`. If you have a development clone or a non-standard layout, override it:
-
-```bash
-export HERMES_AGENT_ROOT=/path/to/hermes-agent
-```
-
-**Python interpreter not found**
-
-Herm tries to locate a Python interpreter in this order: `$VIRTUAL_ENV`, `<root>/venv`, `<root>/.venv`, then `python3`. If none of these resolve correctly (common on Windows or in unusual venv setups), specify the interpreter explicitly:
-
-```bash
-export HERMES_PYTHON=/usr/bin/python3
-```
-
-<Steps>
-  <Step title="Set the relevant environment variables">
-    Add the appropriate exports above to your shell profile (e.g. `~/.zshrc` or `~/.bashrc`) and reload your shell.
-  </Step>
-  <Step title="Check gateway output">
-    Run `/logs` inside Herm to inspect the gateway's stderr ring buffer for specific error messages.
-  </Step>
-  <Step title="Verify your installation with /status">
-    Type `/status` in the chat composer. The dialog shows the current Herm version, model, and resolved paths — confirming what Herm actually sees at runtime.
-  </Step>
-</Steps>
-
-<Warning>
-Herm does not guarantee backward compatibility with older Hermes Agent versions. If you recently updated Hermes and the gateway stopped working, check the Herm CHANGELOG for a matching update.
-</Warning>
-</Accordion>
-
-<Accordion title="Session state seems stale">
-If Herm is showing outdated config values, MCP servers are not reflecting recent changes, or skills do not match what you see on disk, you can reload the relevant subsystem without restarting Herm.
-
-| What's stale | Command |
-|---|---|
-| API keys or environment variables | `/reload` |
-| MCP servers | `/reload-mcp` |
-| Skills | `/reload-skills` |
-
-Type the appropriate slash command in the chat composer and press Enter. Herm will call the corresponding gateway RPC and show a confirmation toast when the reload completes.
-
-<Note>
-`/reload` hot-reloads `~/.hermes/.env` via the `reload.env` RPC. If you have updated API keys in your environment file, `/reload` is the fastest way to pick them up without a full restart.
-</Note>
-</Accordion>
-
-<Accordion title="Display looks garbled or corrupted">
-Occasional display corruption can occur when the terminal's internal buffer gets out of sync with what Herm has rendered — for example, after resizing the terminal window, switching tmux panes rapidly, or returning from a suspended process.
-
-Press **`Ctrl+L`** at any time to force a full terminal repaint. Herm clears its baseline buffer and redraws the entire UI from scratch.
-
-<Tip>
-`Ctrl+L` works at any time — even mid-stream while the agent is responding. It does not interrupt the session.
-</Tip>
-</Accordion>
-
-<Accordion title="Can't interrupt a running agent">
-While the agent is streaming a response, the composer is in a read-only state and normal key presses are queued rather than sent immediately. To cancel the active agent turn:
-
-**Double-tap `Esc`** — press `Esc` twice in quick succession.
-
-Herm will send an interrupt signal to the gateway, purge any buffered streaming deltas, and return to the ready state so you can type a new message.
-
-<Warning>
-A single `Esc` press will not interrupt a running agent — it only navigates focus within the UI. You must tap `Esc` twice.
-</Warning>
-</Accordion>
-
-<Accordion title="Composer loses focus">
-On non-Chat tabs, keyboard input routes to the tab's content pane rather than the chat composer. If you have navigated to a sidebar tab and want to get back to the composer to type a message:
-
-**Double-tap `Tab`** to jump focus directly back to the chat composer, regardless of which tab is active.
-
-A single `Tab` press cycles focus between the content regions of the current tab. The double-tap shortcut is a fast path back to the composer from anywhere in the UI.
-</Accordion>
-
-<Accordion title="API keys not being picked up after update">
-If you have updated API keys in `~/.hermes/.env` (or your custom `HERMES_HOME` path) and Herm is still using old credentials, the gateway has not yet reloaded the environment file.
-
-Type `/reload` in the chat composer and press Enter. Herm calls the `reload.env` gateway RPC, which re-reads the `.env` file without restarting the gateway process. You should see a confirmation toast when the reload succeeds.
-
-<Steps>
-  <Step title="Update your .env file">
-    Edit `~/.hermes/.env` (or `$HERMES_HOME/.env`) and save your updated API keys.
-  </Step>
-  <Step title="Run /reload in Herm">
-    In the chat composer, type:
-```text
+    ```text
     /reload
-```
-    and press Enter.
-  </Step>
-  <Step title="Verify with /status">
-    Use `/status` to confirm that Herm reports the correct model and paths, indicating the gateway is operating with the updated configuration.
-  </Step>
-</Steps>
-</Accordion>
+    ```
+  </Accordion>
 
-<Accordion title="Windows: Eikon tab crashes">
-On Windows, the Eikon tab could crash when Herm was unable to locate the correct Python virtual environment for the gateway subprocess — particularly in environments where venv paths use Windows-style separators or the Python executable name differs.
+  <Accordion title="MCP servers or skills look stale">
+    Use the reload command for the stale surface.
 
-<Steps>
-  <Step title="Update to Herm v1.8.1 or later">
-    This crash was fixed in v1.8.1, which added cross-platform compatibility for Python venv path resolution, a Windows `python` executable fallback, and error handling to prevent unhandled rejections from killing the app.
+    | Surface | Command |
+    |---|---|
+    | API keys or environment variables | `/reload` |
+    | MCP servers | `/reload-mcp` |
+    | Skills | `/reload-skills` |
+  </Accordion>
+</AccordionGroup>
 
-    ```bash
-    bun add -g herm-tui   # updates to latest stable
-    npm i -g herm-tui     # or via npm
-```
-  </Step>
-  <Step title="If the issue persists, set HERMES_PYTHON">
-    Specify the full path to your Python interpreter explicitly:
+## Session control
 
-    ```bash
-    # In your environment or a .env file
-    HERMES_PYTHON=C:\Python311\python.exe
-```
+<AccordionGroup>
+  <Accordion title="Cannot interrupt a running agent">
+    Double-tap `Esc`. A single `Esc` press only moves focus or shows an interrupt notice. The second press sends the interrupt.
+  </Accordion>
 
-    You can also add this to a `.env` file in your Hermes home directory.
-  </Step>
-</Steps>
+  <Accordion title="Composer loses focus">
+    Double-tap `Tab` to return focus to the composer from any non-Chat tab. A single `Tab` cycles focus within the current tab.
+  </Accordion>
 
-<Note>
-All available environment overrides are documented in `.env.example` in the Herm repository. All variables are optional — Herm runs without any of them when the defaults resolve correctly.
-</Note>
-</Accordion>
+  <Accordion title="Session state seems stale">
+    Press `r` in session lists to refresh visible rows. Use `/reload` only for environment changes and `/reload-mcp` only for MCP/tool changes.
+  </Accordion>
+</AccordionGroup>
 
+## Windows
+
+<AccordionGroup>
+  <Accordion title="Python cannot be found on Windows">
+    Set `HERMES_PYTHON` to the Python executable that has Hermes Agent dependencies available.
+
+    ```powershell
+    $env:HERMES_PYTHON = "C:\Python311\python.exe"
+    ```
+
+    Then restart Herm.
+  </Accordion>
 </AccordionGroup>
 
 ## Related docs

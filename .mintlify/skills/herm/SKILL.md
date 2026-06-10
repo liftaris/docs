@@ -44,19 +44,19 @@ herm -c
 
 ## Main docs
 
-- [Introduction](/introduction) — what Herm is and where it fits.
-- [Quickstart](/quickstart) — install and launch Herm.
-- [Configuration](/configuration) — environment variables and local preferences.
-- [Chat](/features/chat) — streaming chat, images, tool calls, voice, and slash commands.
-- [Sessions](/features/sessions) — browse, resume, rename, and inspect sessions.
-- [Automation](/features/automation) — kanban, profiles, and cron jobs.
-- [Config tab](/features/config) — settings, skills, toolsets, env vars, and memory.
-- [Eikon overview](/eikon/overview) — terminal avatars and the Eikon tab.
-- [Themes](/customization/themes) — built-in themes and skins.
-- [Keybindings](/customization/keybindings) — default and rebindable shortcuts.
-- [Slash commands](/customization/slash-commands) — local Herm commands and gateway commands.
-- [Plugins](/plugins/overview) — bundled TUI plugin extension points.
-- [Troubleshooting](/troubleshooting/common-issues) — common terminal, gateway, and config issues.
+- [Introduction](/introduction): what Herm is and where it fits.
+- [Quickstart](/quickstart): install and launch Herm.
+- [Configuration](/configuration): environment variables and local preferences.
+- [Chat](/features/chat): streaming chat, images, tool calls, voice, and slash commands.
+- [Sessions](/features/sessions): browse, resume, rename, and inspect sessions.
+- [Automation](/features/automation): kanban, profiles, and cron jobs.
+- [Config tab](/features/config): settings, skills, toolsets, env vars, and memory.
+- [Eikon overview](/eikon/overview): terminal avatars and the Eikon tab.
+- [Themes](/customization/themes): built-in themes and skins.
+- [Keybindings](/customization/keybindings): default and rebindable shortcuts.
+- [Slash commands](/customization/slash-commands): local Herm commands and gateway commands.
+- [Plugins](/plugins/overview): bundled TUI plugin extension points.
+- [Troubleshooting](/troubleshooting/common-issues): common terminal, gateway, and config issues.
 
 ## High-value workflows
 

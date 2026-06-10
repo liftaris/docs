@@ -1,75 +1,74 @@
 ---
-title: "Herm Sessions — browse, resume, and inspect history"
+title: "Herm Sessions: browse, resume, and inspect history"
 sidebarTitle: "Sessions"
-description: "Browse, resume, rename, and branch sessions in Herm. Inspect active context segments, review token analytics, and restore earlier states with rollback."
+description: "Browse, resume, rename, and branch sessions in Herm. Inspect context, lineage, token usage, models, tools, and cost summaries."
 ---
 
-The Sessions tab gives you full control over your conversation history without dropping back to the shell. Every session you have ever started with Hermes Agent is listed here, browsable, resumable, and inspectable. Switch to it with **Alt+2** or by typing `/sessions` in the chat composer.
+The Sessions tab gives you a terminal view of Hermes Agent session history. Open it with **Alt+2** or `/sessions`.
 
-The tab has three sub-tabs — **List**, **Context**, and **Analytics** — navigated with **Shift+Left / Shift+Right**.
+The tab has three sub-tabs: **List**, **Context**, and **Analytics**. Move between sub-tabs with **Shift+Left** and **Shift+Right**.
 
-## Session List
+## List sub-tab
 
-The List sub-tab shows all past and current sessions in reverse-chronological order.
+The List sub-tab joins gateway session data with Herm's local session database. It shows sessions in the selected source filter with title, source, model, token, cost, tool, lineage, and timestamp details when available.
 
 <CardGroup cols={2}>
   <Card title="Resume a session" icon="arrow-right">
     Highlight a session and press `Enter` to resume it in the Chat tab.
   </Card>
   <Card title="New session" icon="plus">
-    Press `n` to start a new session immediately.
+    Press `n` to start a new session.
   </Card>
-  <Card title="Rename / retitle" icon="pen">
-    Press `Ctrl+R` to rename the selected session inline.
+  <Card title="Rename" icon="pen">
+    Press `Ctrl+R` to retitle the selected session.
   </Card>
   <Card title="Delete" icon="trash">
-    Press `d` to delete the selected session. You will be asked to confirm.
+    Press `d` to delete the selected session after confirmation.
   </Card>
   <Card title="Reload" icon="rotate">
-    Press `r` to refresh the session list from the gateway.
+    Press `r` to refresh from the gateway and local store.
   </Card>
   <Card title="Search" icon="magnifying-glass">
-    Press `/` to filter sessions by title or content.
+    Press `/` to filter sessions.
   </Card>
 </CardGroup>
 
-### Walking session lineage
-
-Sessions in Herm can have a lineage — a parent/child chain that forms when you branch or compress a session. Use the **Left** and **Right** arrow keys to walk backward and forward along this lineage chain, letting you trace how a long-running conversation evolved over time.
+Use **Left** and **Right** in the List sub-tab to switch source filters. Session lineage appears in the detail pane, including parent and compressed-successor links when Herm can read them from the local session database.
 
 ## Context sub-tab
 
-The Context sub-tab shows the active context segments loaded for the current session — the files, diffs, memory entries, and prior conversation chunks that Hermes Agent is holding in its context window. Use this view to understand exactly what the agent can "see" during a turn.
+The Context sub-tab shows what the active Hermes Agent session has loaded into context. Use it to inspect prompt segments, source files, memory, tool schemas, or other context blocks that affect the next turn.
 
-The **context gauge** in the sidebar mirrors this: it fills as the context window grows and gives you a quick visual indicator of how close you are to the model's context limit before you even switch tabs.
+The sidebar context gauge mirrors this view. It fills as the context window grows and helps you decide when to run `/compress`.
 
 ## Analytics sub-tab
 
-The Analytics sub-tab shows per-session statistics drawn from the gateway:
+The Analytics sub-tab shows aggregate usage over a selected period, such as `1d`, `7d`, `30d`, or `90d`. Current panels include:
 
-- **Token usage** — prompt tokens and completion tokens for each turn
-- **Context fill** — how much of the model's context window was used
-- **Cost** — estimated cost per turn and session total
-- **Model stats** — which model was active and any overrides applied
+- daily cost and usage trends
+- model breakdowns
+- top tools
+- source breakdowns
+- token and cost summaries
 
-Use this view to track expensive sessions, identify turns where context grew unexpectedly, or compare cost across different model configurations.
+Cost is an estimate based on the metadata Hermes Agent records. Treat it as an operational signal, not a billing ledger.
 
-## Session management slash commands
+## Session commands
 
-You can trigger all of the most important session operations from the chat composer without switching tabs.
+You can trigger common session operations from the chat composer.
 
 <Tabs>
-  <Tab title="Session lifecycle">
+  <Tab title="Lifecycle">
     | Command | Description |
     |---------|-------------|
     | `/new` | Start a new session |
-    | `/title [text]` | Set a title for the current session |
-    | `/history` | Open a server-side transcript viewer |
-    | `/resume` | Resume a previous session by selection |
-    | `/branch` | Create a branch of the current session |
-    | `/compress` | Compress the context window to free space |
-    | `/undo` | Undo the last message exchange |
-    | `/redo` | Re-send the last undone message |
+    | `/title [text]` | Set a session title |
+    | `/history` | Open the transcript viewer |
+    | `/resume` | Open session selection |
+    | `/branch [name]` | Fork the current conversation |
+    | `/compress` | Summarize older context |
+    | `/undo` | Remove the last message exchange |
+    | `/redo` | Re-send the last undone user message |
   </Tab>
   <Tab title="Checkpoints">
     | Command | Description |
@@ -79,26 +78,26 @@ You can trigger all of the most important session operations from the chat compo
   <Tab title="Prompt drafts">
     | Command | Description |
     |---------|-------------|
-    | `/stash` | Park the current prompt draft for later |
-    | `/stash pop` | Restore the most recently stashed draft |
-    | `/stash list` | List all stashed drafts |
+    | `/stash` | Park the current prompt draft |
+    | `/stash pop` | Restore the most recent stashed draft |
+    | `/stash list` | List stashed drafts |
   </Tab>
 </Tabs>
 
 ## Rollback checkpoints
 
-Hermes Agent saves checkpoints as a session progresses. `/rollback` opens a checkpoint browser where you can scroll through the history of a session and restore it to any earlier point. This is useful when an agent run goes off-track and you want to replay from a known-good state.
+Hermes Agent can save checkpoints as a session progresses. `/rollback` opens a checkpoint browser so you can restore an earlier state.
 
 <Warning>
-  Restoring a checkpoint replaces the session's current state. The turns after the checkpoint are removed. Use `/branch` first if you want to preserve the current direction while also exploring a rollback.
+  Restoring a checkpoint replaces the current session state. Use `/branch` first if you want to preserve the current direction.
 </Warning>
 
 ## Context compression
 
-As a long session approaches the model's context limit, the context gauge in the sidebar will fill toward capacity. Run `/compress` to let Hermes Agent summarise older turns and free up context window space without starting a new session. You can also use **`<leader>c`** as a keyboard shortcut for this action.
+Run `/compress` or press `<leader>c` when a long session approaches the model's context limit. Compression summarizes older turns while keeping the visible transcript stable.
 
 <Tip>
-  Navigate directly to the Context sub-tab with `/context` and to the Analytics sub-tab with `/analytics` (or `/insights`) from the chat composer.
+  Jump directly to **Context** with `/context` and **Analytics** with `/analytics` or `/insights`.
 </Tip>
 
 ## Related docs
