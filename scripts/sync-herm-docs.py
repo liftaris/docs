@@ -116,6 +116,7 @@ def env_vars() -> str:
         'HERMES_KANBAN_HOME':'Pin the kanban data home.',
         'HERMES_KANBAN_BOARD':'Default kanban board filter/selection.',
         'HERMES_KANBAN_BUSY_TIMEOUT_MS':'Kanban busy timeout in milliseconds.',
+        'HERMES_KANBAN_ATTACHMENTS_ROOT':'Override where Herm resolves kanban attachment files.',
         'HERM_IO_INLINE':'Inline I/O payload mode for Herm internal I/O.',
         'HERMES_TUI_NO_CONFIRM':'Skip Herm client-side destructive slash confirmations when set to `1`.',
         'CONTROL':'Enable the local control server when set to `1`.',
