@@ -22,7 +22,7 @@ Select a card to preview it in the sidebar. Press `Space` to toggle the preview 
 | `r` | Reload the catalog |
 | `Space` | Toggle preview state |
 | `Enter` | Open the actions dialog |
-| `d` | Delete a local installed entry when allowed |
+| `d` | Uninstall a local installed entry when allowed |
 
 ## Install or use an entry
 
@@ -34,9 +34,47 @@ Common actions include:
 - **Eikon only:** install the runtime artifact without source media.
 - **Eikon + Source:** install the runtime artifact and fetch source media when the package exposes it.
 - **Download Source:** fetch source media for an already-installed entry when available.
-- **Delete:** remove the local installed entry when it is safe to do so.
+- **Uninstall:** remove the local installed entry. This only affects your machine — the entry stays in the public registry.
+- **Delist from Registry:** open an author-owned pull request that removes the entry from the public Eikon registry. See [Delist from Registry](#delist-from-registry).
 
 Installing an eikon does not automatically activate it. Use the action dialog or Gallery to choose when it becomes active.
+
+<Note>
+  **Uninstall** removes files from your local Hermes home. **Delist from Registry** is a separate action that takes the entry down from the public catalog for everyone. They are independent — you can uninstall without delisting, and delisting does not touch your local install.
+</Note>
+
+## Delist from Registry
+
+`Delist from Registry` requests removal of an official catalog entry from the public Eikon registry. It is available from the Marketplace actions dialog on official catalog entries, and from the CLI:
+
+```bash
+herm eikon delist <name|id>
+```
+
+### Who can request a delist
+
+Only the GitHub user who authored the original merged `eikons: submit <name>` pull request can delist an entry. Herm looks up the submission PR for the entry, compares its author to your authenticated `gh` user, and refuses the action if they do not match. Non-official entries (anything not served by the public registry host) are not eligible.
+
+### What the PR contains
+
+Herm forks the registry repo under your account, opens a branch named `delist/<name>`, and pushes a single commit titled `eikons: delist <name>` that:
+
+- removes the entry from `eikons/index.json`
+- removes the entry's files under `eikons/<name>/` and `packages/<namespace>/<name>/`
+
+The PR is opened against the registry's `main` branch from your fork. Herm prints the PR URL when the request succeeds.
+
+### Auto-merge
+
+The Eikon registry runs an `auto-delist` workflow on every PR whose title starts with `eikons: delist `. It re-runs the same validation server-side:
+
+- the PR author matches the original submit-PR author
+- only the target entry's files are removed
+- `eikons/index.json` is updated to remove exactly that entry and nothing else
+
+If validation passes, the workflow squash-merges the PR on the validated head commit. If anything fails, the PR stays open with the validation error and the registry maintainers can review it manually.
+
+After the merge propagates, the entry disappears from the public catalog. Existing local installs are unaffected — use **Uninstall** (or `herm eikon remove <name>`) to remove your local copy.
 
 ## Catalog trust and compatibility
 
