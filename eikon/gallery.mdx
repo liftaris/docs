@@ -59,10 +59,10 @@ Press `s` on a non-bundled local eikon to open the **Submit eikon** dialog. Subm
     - `description` — short one-line summary
     - `glyph` — one or two terminal-safe characters used as a marker
 
-    Defaults are inferred from the local artifact and your GitHub identity when available. Use `Tab` and `Shift+Tab` to move between fields. Values that contain control characters, look secret-like (tokens, credentials, private keys), or point at private or unsafe URLs are rejected before preflight.
+    Herm infers defaults from the local artifact and your GitHub identity when available. Use `Tab` and `Shift+Tab` to move between fields. Preflight rejects values that contain control characters, look secret-like (tokens, credentials, private keys), or point at private or unsafe URLs.
   </Step>
   <Step title="Preview the public bundle">
-    Press `Enter`. Herm runs the registry preflight, which builds a staged copy of the public submission bundle: the gzip-normalized runtime, the package manifest, generated package blobs, and the merged `eikons/index.json` catalog entry. The dialog lists the included files, the target repository, the generated PR title and body, the manual fallback URL, and the staged bundle path you can open from the dialog.
+    Press `Enter` to run the registry preflight. Herm stages the public submission bundle: the gzip-normalized runtime, the package manifest, generated package blobs, and the merged `eikons/index.json` catalog entry. The dialog then lists the included files, the target repository, the generated PR title and body, the manual fallback URL, and the staged bundle path.
 
     Editing any metadata field invalidates the staged bundle so the next submit rebuilds it.
   </Step>
