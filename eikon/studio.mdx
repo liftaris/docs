@@ -28,7 +28,7 @@ Studio has three panes.
 
 <Steps>
   <Step title="Attach source media">
-    Select the source control and choose an image or video. Media decoding uses `ffmpeg`.
+    Open the source row. Studio leads with any local source files it detects on disk; pick one to make it the source for the current state. If the eikon is a published package, **Download source** appears at the top of the picker. **Local file…** stays available as a manual path-entry fallback. Media decoding uses `ffmpeg`.
   </Step>
   <Step title="Choose a rasterizer">
     Pick `chafa` for `chafa` output or `native` for Herm's built-in renderer. The native renderer still needs `ffmpeg` for source decoding.
@@ -43,6 +43,40 @@ Studio has three panes.
     Press `Ctrl+U` when you want to save and activate the eikon as your current avatar.
   </Step>
 </Steps>
+
+## How Studio resolves source
+
+Studio resolves the editable source for a state in this order:
+
+1. **Local source on disk.** Files already in the eikon's `source/` folder — adopted from a local pick, a previous download, or `/eikon-create` — are the source of truth. Per-state drafts in `studio.json` win, then `base`, then `idle`, then the first compatible image or video.
+2. **Published source download.** If the installed package exposes a source URL, Studio shows a **Download source** action and an inline `download source` row in the settings pane. Running it pulls the package's source media into `source/` so you can tune locally.
+3. **Manual path entry.** **Local file…** in the source picker accepts any path you type and copies it into `source/` under the state's role.
+
+Until source exists, the preview falls back to the baked frames packed into the `.eikon` artifact and the rasterizer knobs stay disabled.
+
+## Download Source
+
+When an installed package publishes source media, **Download source** appears in two places:
+
+- the top of the source picker for the current state
+- a `download source` row in the settings pane, with a preview of file count and total size
+
+Running it downloads every source file declared by the package manifest into the eikon's `source/` folder, names each file after its role using the package's `mediaType` (for example, `base.png`, `idle.mp4`), wires the files into `studio.json`, and reopens the eikon so the rasterizer knobs activate. Content-addressed blobs in the package keep their proper media extensions instead of landing as bare role names.
+
+Runtime-only installs work the same way. If you initially installed the runtime artifact without source — including content-addressed packages — and the package later exposes a source download, **Download source** still appears in Studio and produces editable files under `source/`.
+
+If you have unsaved edits in the current draft, Studio merges the downloaded files into your draft instead of reopening the eikon, so your in-progress changes survive.
+
+## Refresh
+
+Press the configured `list.refresh` key to reload the current eikon from disk. Refresh re-reads source files, picks up new media you added outside Studio, and resets the preview.
+
+Refresh is non-destructive:
+
+- If the draft is **clean**, Studio reopens it from disk and toasts `Reloaded`.
+- If the draft is **dirty**, Studio keeps your in-memory edits, skips the reload, and toasts `Reload skipped: unsaved edits`. Save or revert first if you want a clean reload.
+
+Studio also watches the source folder while a draft is open. If files change on disk under a clean draft, it reopens automatically; under a dirty draft, it surfaces a `Source changed on disk` toast instead of clobbering your edits.
 
 ## Standard states
 
@@ -69,7 +103,7 @@ You can tune each state independently. State-specific source or knob overrides l
 
 ## Source and runtime files
 
-Studio writes the runtime `.eikon` file and local `studio.json` settings under the active Hermes home. Source media is local authoring data. Other users only need the packaged `.eikon` artifact unless you intentionally publish source media.
+Studio writes the runtime `.eikon` file and local `studio.json` settings under the active Hermes home. Files in the `source/` folder are the editable source of truth — Studio prefers them over packaged metadata when you reopen the eikon. Source media is local authoring data; other users only need the packaged `.eikon` artifact unless you intentionally publish source media.
 
 ## Related docs
 
