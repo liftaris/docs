@@ -54,14 +54,14 @@ Studio resolves the editable source for a state in this order:
 
 Until source exists, the preview falls back to the baked frames packed into the `.eikon` artifact and the rasterizer knobs stay disabled.
 
-## Download Source
+## Download source
 
 When an installed package publishes source media, **Download source** appears in two places:
 
 - the top of the source picker for the current state
 - a `download source` row in the settings pane, with a preview of file count and total size
 
-Running it downloads every source file declared by the package manifest into the eikon's `source/` folder, names each file after its role using the package's `mediaType` (for example, `base.png`, `idle.mp4`), wires the files into `studio.json`, and reopens the eikon so the rasterizer knobs activate. Content-addressed blobs in the package keep their proper media extensions instead of landing as bare role names.
+Running it downloads every source file declared by the package manifest into the eikon's `source/` folder. Studio names each file after its role using the package's `mediaType` (for example, `base.png`, `idle.mp4`), wires the files into `studio.json`, and reopens the eikon so the rasterizer knobs activate. Content-addressed blobs in the package keep their proper media extensions instead of landing as bare role names.
 
 Runtime-only installs work the same way. If you initially installed the runtime artifact without source — including content-addressed packages — and the package later exposes a source download, **Download source** still appears in Studio and produces editable files under `source/`.
 
