@@ -29,7 +29,7 @@ Kanban is an agent work surface backed by Hermes Agent's persistent task store. 
     Use arrow keys to move between task rows and columns.
   </Step>
   <Step title="Open task detail">
-    Press `Enter` to inspect title, body, assignee, run history, diagnostics, parent and child links, comments, and worker-log tail.
+    Press `Enter` to inspect title, body, assignee, run history, diagnostics, parent and child links, comments, attachments, and worker-log tail. The attachments block shows filename, size, and age for each file. Attachments stored inside the board's configured attachment root render as clickable `FileLink` entries; files stored outside that root still appear in the list but their absolute paths are not linked. Herm only reads attachments — adding or removing files happens through Hermes Agent.
   </Step>
   <Step title="Create or update tasks">
     Use the action hints in the tab to create tasks, assign work, comment, block, schedule, unblock, complete, or archive tasks.
