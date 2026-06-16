@@ -1,7 +1,7 @@
 ---
 title: "Slash commands"
 sidebarTitle: "Slash commands"
-description: "Use / in the composer to open local Herm commands and gateway-discovered commands."
+description: "Type / in the Herm composer to open local client commands and gateway-discovered commands for sessions, skills, plugins, and MCP prompts."
 ---
 
 Slash commands give you quick, keyboard-driven access to Herm's full feature surface without leaving the composer. Typing `/` in the input area opens a live popover that filters commands as you type, shows descriptions and argument hints, and supports tab-completion for subcommands. Press `Return` on a highlighted entry, or finish typing the command and press `Return`.
@@ -75,6 +75,7 @@ The following fallback catalog is generated from `src/app/slashCommands.ts` in t
 | `/redo` | None | `None` | Re-send the last undone message |
 | `/branch` | `fork` | `[name]` | Fork current conversation |
 | `/browser` | None | `[connect\|disconnect\|status] [url]` | Connect/disconnect a CDP browser |
+| `/yolo` | None | `None` | Toggle approval bypass for the current session |
 
 ## Info commands
 
@@ -117,6 +118,22 @@ The `/goal` command accepts several subcommands:
 | `resume` | Resume a paused goal |
 | `clear` | Clear the goal entirely |
 | `status` | Print the current goal and its state |
+
+</Accordion>
+
+<Accordion title="YOLO mode (/yolo)">
+
+The `/yolo` command toggles approval bypass for the active Hermes Agent session. When enabled, tool calls that would normally prompt for confirmation run without interruption. Herm intercepts the command locally and routes it through the gateway's `config.set` path so the new state applies immediately to the current session only — other sessions and your saved config are unaffected.
+
+After running `/yolo`, the new state is reflected in `session.info.yolo` (`true` when bypass is on) and Herm shows a toast like `yolo on` or `yolo off`. Run `/yolo` again to toggle it back.
+
+```text
+/yolo   # toggle approval bypass for this session
+```
+
+<Warning>
+  YOLO mode disables per-call approvals for the active session. Only enable it when you trust the prompt, tools, and working directory.
+</Warning>
 
 </Accordion>
 
