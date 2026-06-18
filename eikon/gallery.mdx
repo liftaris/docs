@@ -38,13 +38,44 @@ Current source install flows are GitHub-package oriented. Use Marketplace for th
 | `n` | Create or install an eikon |
 | `e` | Edit the selected eikon in Studio |
 | `u` | Update a non-bundled installed eikon |
-| `s` | Submit a local draft to the configured catalog flow |
+| `s` | Submit a local draft to the official registry |
 | `d` | Delete a local non-bundled eikon |
 | `/` | Search the list |
 
 <Warning>
   Deleting an eikon removes local files. Bundled eikons cannot be deleted from Gallery.
 </Warning>
+
+## Submit a local draft to the official registry
+
+Press `s` on a non-bundled local eikon to open the **Submit eikon** dialog. Submitting opens a pull request against the official Eikon registry; it does not activate or change the selected eikon.
+
+<Steps>
+  <Step title="Fill in public metadata">
+    The dialog prompts for four fields that become the eikon's public identity:
+
+    - `title` — display name in the catalog
+    - `author` — credit shown on the listing
+    - `description` — short one-line summary
+    - `glyph` — one or two terminal-safe characters used as a marker
+
+    Herm infers defaults from the local artifact and your GitHub identity when available. Use `Tab` and `Shift+Tab` to move between fields. Preflight rejects values that contain control characters, look secret-like (tokens, credentials, private keys), or point at private or unsafe URLs.
+  </Step>
+  <Step title="Preview the public bundle">
+    Press `Enter` to run the registry preflight. Herm stages the public submission bundle: the gzip-normalized runtime, the package manifest, generated package blobs, and the merged `eikons/index.json` catalog entry. The dialog then lists the included files, the target repository, the generated PR title and body, the manual fallback URL, and the staged bundle path.
+
+    Editing any metadata field invalidates the staged bundle so the next submit rebuilds it.
+  </Step>
+  <Step title="Consent and submit">
+    Press `c` to record consent to publish the listed files. Then press `Enter` to submit through the GitHub backend. Herm forks the registry repo if needed, creates a `submit/<name>` branch, uploads the staged files, and opens the PR.
+
+    If GitHub authentication is missing or the backend call fails, Herm keeps the staged bundle and surfaces a browser fallback. Press `o` to open the prepared compare URL, then follow the listed manual steps to push the staged bundle and open the PR by hand. Press `Esc` to cancel; cancelling cleans up the staged bundle unless a fallback is in progress.
+  </Step>
+</Steps>
+
+<Note>
+  The staged bundle strips unknown manifest fields and stores the public metadata under a `display` block. Source media is not included by default — only the runtime artifact and registry package contract files ship in the PR.
+</Note>
 
 ## When to use Studio or Marketplace
 

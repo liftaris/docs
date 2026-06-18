@@ -63,9 +63,19 @@ You can tune each state independently. State-specific source or knob overrides l
 |---|---|
 | `Ctrl+S` | Save the current draft and render states |
 | `Ctrl+U` | Save and activate the eikon |
-| `u` | Submit the current local draft through the configured submit flow |
+| `u` | Submit the current local draft to the official registry |
 | `Tab` / `Shift+Tab` | Move focus between panes |
 | Arrow keys | Move selection or adjust the focused control |
+
+## Submit a draft to the official registry
+
+Press `u` from Studio to submit the current draft to the official Eikon registry. Studio gates dirty drafts before handing off to the submit dialog so the public bundle always reflects a real saved artifact.
+
+- If the draft has unsaved changes (or no saved `.eikon` exists yet), Studio shows a **Save before submit?** prompt. Choose to save the current preview, discard and submit the last saved artifact, or cancel and keep editing.
+- If you choose **save** while this draft is the active avatar, Studio confirms once more that saving will rewrite the active avatar's backing artifact. Submit itself never changes the active selection — it only opens a registry PR.
+- Published (bundled) eikons can't be submitted; create a local draft first.
+
+After the gate, Studio opens the same **Submit eikon** dialog described in [Gallery](/eikon/gallery#submit-a-local-draft-to-the-official-registry). Fill in the public metadata, preflight the registry bundle, consent, then submit through the GitHub backend or use the manual PR fallback.
 
 ## Source and runtime files
 
